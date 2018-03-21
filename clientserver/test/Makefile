@@ -26,7 +26,7 @@ LDLIBS = -lclientserver
 # Targets
 PROGS = myserver myclient
 
-all: $(PROGS) libclientserver.a
+all:libclientserver.a $(PROGS) 
 
 # Targets rely on implicit rules for compiling and linking
 # The dependency on libclientserver.a is not defined.
