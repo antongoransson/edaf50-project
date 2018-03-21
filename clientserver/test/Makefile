@@ -16,9 +16,6 @@ CXXFLAGS += -std=c++11
 CXXFLAGS += -g
 CXXFLAGS += $(DEPFLAGS)
 LDFLAGS   = -g -L.
-#CPPFLAGS += -stdlib=libc++
-#CXXFLAGS += -stdlib=libc++
-#LDFLAGS +=  -stdlib=libc++
 
 # Libraries
 LDLIBS = -lclientserver
@@ -26,7 +23,7 @@ LDLIBS = -lclientserver
 # Targets
 PROGS = myserver myclient
 
-all:libclientserver.a $(PROGS) 
+all: libclientserver.a $(PROGS)
 
 # Targets rely on implicit rules for compiling and linking
 # The dependency on libclientserver.a is not defined.

@@ -16,15 +16,12 @@ CXXFLAGS += -std=c++11
 CXXFLAGS += -g
 CXXFLAGS += $(DEPFLAGS)
 LDFLAGS   = -g -L.
-#CPPFLAGS += -stdlib=libc++
-#CXXFLAGS += -stdlib=libc++
-#LDFLAGS +=  -stdlib=libc++
 
 # Libraries
 LDLIBS = -lclientserver
 # Targets
-
-all: libclientserver.a
+PROGS = newsserver newsclient
+all: libclientserver.a $(PROGS)
 
 # Create the library; ranlib is for Darwin (OS X) and maybe other systems.
 # Doesn't seem to do any damage on other systems.
@@ -36,7 +33,7 @@ client: newsclient
 
 newsserver: newsserver.o
 newsclient: newsclient.o
-libclientserver.a: connection.o server.o 
+libclientserver.a: connection.o server.o
 	ar rv libclientserver.a  connection.o server.o
 	ranlib libclientserver.a
 
@@ -45,7 +42,7 @@ libclientserver.a: connection.o server.o
 
 # Standard clean
 clean:
-	rm -f *.o
+	rm -f *.o $(PROGS)
 
 distclean: clean
 	-rm *.d libclientserver.a
