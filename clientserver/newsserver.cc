@@ -68,6 +68,37 @@ void delete_newsgroup(MessageHandler& mh){
 	mh.send_code(Protocol::ANS_END);
 }
 
+void handle_create_article(MessageHandler& mh){
+// COM_CREATE_ART num_p string_p string_p string_p COM_END
+// ANS_CREATE_ART [ANS_ACK | ANS_NAK ERR_NG_DOES_NOT_EXIST] ANS_END
+
+	mh.send_code(Protocol::ANS_CREATE_ART);
+	if(create_article(mh.recv_string_parameter(), mh.recv_string_parameter(), mh.recv_string_parameter())){
+		mh.send_code(Protocol::ANS_ACK);
+	}
+	else{
+		mh.send_code(Protocol::ANS_NAK);
+		mh.send_code(Protocol::ERR_NG_ALREADY_EXISTS);
+	}
+	mh.send_code(Protocol::ANS_END);
+}
+
+void handle_delete_article(MessageHandler& mh){
+// COM_DELETE_ART num_p num_p COM_END
+// ANS_DELETE_ART [ANS_ACK |
+// ANS_NAK [ERR_NG_DOES_NOT_EXIST | ERR_ART_DOES_NOT_EXIST]] ANS_END
+
+	mh.send_code(Protocol::ANS_DELETE_ART);
+	if(delete_article(mh.recv_int_parameter(), mh.recv_int_parameter())){
+		mh.send_code(Protocol::ANS_ACK);
+	}
+	else{
+		mh.send_code(Protocol::ANS_NAK);
+		mh.send_code(Protocol::ERR_NG_DOES_NOT_EXIST);
+	}
+	mh.send_code(Protocol::ANS_END);
+}
+
 int main(int argc, char* argv[]){
 	if (argc != 2) {
 		cerr << "Usage: myserver port-number" << endl;
