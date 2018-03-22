@@ -19,7 +19,7 @@ public:
   virtual bool create_news_group(string name);
   virtual bool create_article(int grpID, string name, string author, string text);
   virtual bool delete_news_group(int grpID);
-  virtual bool delete_article(int grpID, int artID);
+  virtual int delete_article(int grpID, int artID);
   virtual Article get_article(int grpID, int artID);
 };
 #endif
