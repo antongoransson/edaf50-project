@@ -19,11 +19,11 @@ using std::shared_ptr;
  */
 MessageHandler::MessageHandler(shared_ptr<Connection>& c): conn(c)  {}
 
-void MessageHandler::sendByte(int code) {
+void MessageHandler::send_byte(int code) {
 	try {
 		conn->write(static_cast<char>(code));
 	} catch (ConnectionClosedException e) {
-		throw new ConnectionClosedException();
+		throw ConnectionClosedException();
 	}
 }
 
@@ -35,8 +35,8 @@ void MessageHandler::sendByte(int code) {
  * @throws ConnectionClosedException
  *             If the server died
  */
-void MessageHandler::sendCode(Protocol code) {
-	sendByte(static_cast<int>(code));
+void MessageHandler::send_code(Protocol code) {
+	send_byte(static_cast<int>(code));
 }
 
 /**
@@ -47,11 +47,11 @@ void MessageHandler::sendCode(Protocol code) {
  * @throws ConnectionClosedException
  *             If the server died
  */
-void MessageHandler::sendInt(int value) {
-	sendByte((value >> 24) & 0xFF);
-	sendByte((value >> 16) & 0xFF);
-	sendByte((value >> 8) & 0xFF);
-	sendByte(value & 0xFF);
+void MessageHandler::send_int(int value) {
+	send_byte((value >> 24) & 0xFF);
+	send_byte((value >> 16) & 0xFF);
+	send_byte((value >> 8) & 0xFF);
+	send_byte(value & 0xFF);
 }
 
 /**
@@ -62,9 +62,9 @@ void MessageHandler::sendInt(int value) {
  * @throws ConnectionClosedException
  *             If the server died
  */
-void MessageHandler::sendIntParameter(int param) {
-	sendCode(Protocol::PAR_NUM);
-	sendInt(param);
+void MessageHandler::send_int_parameter(int param) {
+	send_code(Protocol::PAR_NUM);
+	send_int(param);
 }
 
 /**
@@ -75,14 +75,14 @@ void MessageHandler::sendIntParameter(int param) {
  * @throws ConnectionClosedException
  *             If the server died
  */
-void MessageHandler::sendStringParameter(string param) {
+void MessageHandler::send_string_parameter(string param) {
 	conn->write('$');
-	sendCode(Protocol::PAR_STRING);
-	sendInt(param.length());
+	send_code(Protocol::PAR_STRING);
+	send_int(param.length());
 	for (char c: param) {
-		sendByte(c);
+		send_byte(c);
 	}
-	sendByte('$');
+	send_byte('$');
 }
 /**
  * Receive a command code or an error code from the server.
@@ -91,8 +91,8 @@ void MessageHandler::sendStringParameter(string param) {
  * @throws ConnectionClosedException
  *             If the server died
  */
-int MessageHandler::recvCode() {
-	unsigned char code = recvByte();
+int MessageHandler::recv_code() {
+	unsigned char code = recv_byte();
 	return code;
 }
 
@@ -103,11 +103,11 @@ int MessageHandler::recvCode() {
  * @throws ConnectionClosedException
  *             If the server died
  */
-int MessageHandler::recvInt() {
-	unsigned char b1 = recvByte();
-	unsigned char b2 = recvByte();
-	unsigned char b3 = recvByte();
-	unsigned char b4 = recvByte();
+int MessageHandler::recv_int() {
+	unsigned char b1 = recv_byte();
+	unsigned char b2 = recv_byte();
+	unsigned char b3 = recv_byte();
+	unsigned char b4 = recv_byte();
 	return (b1 << 24) | (b2 << 16) | (b3 << 8) | b4;
 }
 
@@ -118,12 +118,12 @@ int MessageHandler::recvInt() {
  * @throws ConnectionClosedException
  *             If the server died
  */
-int MessageHandler::recvIntParameter() {
-	int code = recvCode();
+int MessageHandler::recv_int_parameter() {
+	int code = recv_code();
 	if (code != static_cast<int>(Protocol::PAR_NUM)) {
 		throw ConnectionClosedException();
 	}
-	return recvInt();
+	return recv_int();
 }
 
 /**
@@ -134,12 +134,12 @@ int MessageHandler::recvIntParameter() {
  *             If the server died
  */
 
-string MessageHandler::recvStringParameter() {
-	int code = recvCode();
+string MessageHandler::recv_string_parameter() {
+	int code = recv_code();
 	if (code != static_cast<int>(Protocol::PAR_STRING)) {
 		throw ConnectionClosedException();
 	}
-	int n = recvInt();
+	int n = recv_int();
 	if (n < 0) {
 		throw ConnectionClosedException();
 	}
@@ -151,7 +151,7 @@ string MessageHandler::recvStringParameter() {
 	return result;
 }
 
-unsigned char MessageHandler::recvByte() {
+unsigned char MessageHandler::recv_byte() {
 	unsigned char code = conn->read();
 	// if (code == Connection.CONNECTION_CLOSED) {
 	// 	throw ConnectionClosedException();
