@@ -32,7 +32,7 @@ client: newsclient
 	./newsclient localhost 3000
 
 
-newsserver: newsserver.o messagehandler.o
+newsserver: newsserver.o messagehandler.o database.o
 newsclient: newsclient.o
 libclientserver.a: connection.o server.o
 	ar rv libclientserver.a  connection.o server.o
