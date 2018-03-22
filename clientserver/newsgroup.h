@@ -2,17 +2,18 @@
 #define NEWSGROUP_H
 
 #include <iostream>
+using std::string;
 
 class NewsGroup
 {
   public:
-    NewsGroup(std::String, int id);
+    NewsGroup(string, int id);
     ~NewsGroup();
     int get_id();
-    std::String get_name();
+    string get_name();
   private:
     int id;
-    std::String name;
+    string name;
 };
 
 
