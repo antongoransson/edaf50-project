@@ -1,3 +1,5 @@
+#ifndef DATABASE_INTERFACE_H
+#define DATABASE_INTERFACE_H
 #include <string>
 #include <vector>
 #include <map>
@@ -20,3 +22,4 @@ public:
   virtual bool delete_article(int grpID, int artID);
   virtual Article get_article(int grpID, int artID);
 };
+#endif
