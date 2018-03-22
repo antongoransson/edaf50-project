@@ -38,13 +38,13 @@
 
 Server::Server(int port) {
 	pending_socket = -1;
-	
+
 	my_socket = socket(AF_INET,SOCK_STREAM, 0);
 	if (my_socket < 0) {
 		my_socket = -1;
 		return;
 	}
-	
+
 	sockaddr_in server;
 	server.sin_family = AF_INET;
 	server.sin_addr.s_addr = INADDR_ANY;
@@ -54,7 +54,7 @@ Server::Server(int port) {
 		my_socket = -1;
 		return;
 	}
-	
+
 	int length = sizeof(server);
 	if (getsockname(my_socket,
 					reinterpret_cast<sockaddr*>(&server),
@@ -62,12 +62,12 @@ Server::Server(int port) {
 		my_socket = -1;
 		return;
 	}
-	
+
 	if (ntohs(server.sin_port) != port) {
 		my_socket = -1;
 		return;
 	}
-	
+
 	listen(my_socket, 5);
 }
 
@@ -84,14 +84,14 @@ std::shared_ptr<Connection> Server::waitForActivity() const {
 	if (my_socket == -1) {
 		error("waitForActivity: server not opened");
 	}
-	
+
 	fd_set read_template;
 	FD_ZERO(&read_template);
 	FD_SET(my_socket, &read_template);
 	for (const auto& conn : connections) {
 		FD_SET(conn->getSocket(), &read_template);
 	}
-	
+
 	std::shared_ptr<Connection> return_conn;
 	select(FD_SETSIZE, &read_template, 0, 0, 0);
 	if (FD_ISSET(my_socket, &read_template)) {
@@ -125,7 +125,7 @@ void Server::registerConnection(const std::shared_ptr<Connection>& conn) {
 		error("registerConnection: no client is trying to connect");
 	}
 	conn->initConnection(pending_socket);
-	connections.push_back(conn);
+	connections.push_back(conn);	
 	pending_socket = -1;
 }
 

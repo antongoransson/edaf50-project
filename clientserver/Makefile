@@ -20,7 +20,7 @@ LDFLAGS   = -g -L.
 # Libraries
 LDLIBS = -lclientserver
 # Targets
-PROGS = newsserver newsclient
+PROGS = newsserver newsclient messagehandler
 all: libclientserver.a $(PROGS)
 
 # Create the library; ranlib is for Darwin (OS X) and maybe other systems.
@@ -31,7 +31,8 @@ server: newsserver
 client: newsclient
 	./newsclient localhost 3000
 
-newsserver: newsserver.o
+
+newsserver: newsserver.o messagehandler.o
 newsclient: newsclient.o
 libclientserver.a: connection.o server.o
 	ar rv libclientserver.a  connection.o server.o

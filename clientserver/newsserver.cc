@@ -3,7 +3,7 @@
 #include "connection.h"
 #include "protocol.h"
 #include "connectionclosedexception.h"
-
+#include "messagehandler.h"
 #include <memory>
 #include <iostream>
 #include <string>
@@ -63,7 +63,8 @@ int main(int argc, char* argv[]){
 		auto conn = server.waitForActivity();
 		if (conn != nullptr) {
 			try {
-				Protocol nbr = static_cast<Protocol>(readNumber(conn));
+				MessageHandler mh(conn);
+				Protocol nbr = static_cast<Protocol>(mh.recvInt());
         switch (nbr) {
           case Protocol::COM_LIST_NG: cout<< "LIST" <<endl; break;
           case Protocol::COM_CREATE_NG: break;
@@ -76,6 +77,7 @@ int main(int argc, char* argv[]){
           default: break;
         }
 				string result ="Good job";
+				// mh.sendStringParameter(result);
 				// if (nbr > 0) {
 				// 	result = "positive";
 				// } else if (nbr == 0) {
@@ -90,6 +92,7 @@ int main(int argc, char* argv[]){
 			}
 		} else {
 			conn = make_shared<Connection>();
+
 			server.registerConnection(conn);
 			cout << "New client connects" << endl;
 		}
