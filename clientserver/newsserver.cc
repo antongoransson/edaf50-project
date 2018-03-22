@@ -65,9 +65,37 @@ int main(int argc, char* argv[]){
 			try {
 				Protocol nbr = static_cast<Protocol>(readNumber(conn));
         switch (nbr) {
-          case Protocol::COM_LIST_NG: cout<< "LIST" <<endl; break;
-          case Protocol::COM_CREATE_NG: break;
-          case Protocol::COM_DELETE_NG: break;
+          case Protocol::COM_LIST_NG:
+						string result = "ANS_LIST_NG";
+						result += " ";
+						vector<Pair<int,string> v = list_news_groups();
+						int size = sizeof(v) / sizeof(v[0]);
+						result += size;
+						result += " ";
+						for(int i = 0; i < size; i++){
+							result += v[i].first;
+							result += " ";
+							result += v[i].second;
+							result += " ";
+						}
+						result += "ANS_END";
+						break;
+
+          case Protocol::COM_CREATE_NG:
+						string result = "ANS_CREATE_NG";
+						if(create_news_group(string_p)){
+							result += "ANS_ACK";
+						}
+						else{
+							result += "ANS_NAK ERR_NG_ALREADY_EXISTS";
+						}
+						result += ANS_END;
+						break;
+
+          case Protocol::COM_DELETE_NG:
+					
+
+					break;
           case Protocol::COM_LIST_ART: break;
           case Protocol::COM_CREATE_ART: break;
           case Protocol::COM_DELETE_ART: break;
