@@ -9,8 +9,6 @@
 #include <string>
 #include <stdexcept>
 #include <cstdlib>
-#include "databaseinterface.h"
-#include "database.h"
 
 using std::cout;
 using std::endl;
@@ -20,12 +18,12 @@ using std::exception;
 using std::shared_ptr;
 using std::make_shared;
 using std::string;
-using std::pair;
 
-void handle_list_articles(MessageHandler& mh, DatabaseInterface& db) {
+
+void handle_list_articles(MessageHandler& mh) {
 	 mh.send_code(Protocol::ANS_LIST_ART);
 	 int nbr = mh.recv_int_parameter();
-	 pair<vector<pair<int,string>, bool> articles = db.list_articles();
+	 // pair<vector<pair<int,string>, bool> articles = db.list_articles();
 	 if (!false) {
 	 	mh.send_code(Protocol::ANS_NAK);
 	  mh.send_code(Protocol::ERR_NG_DOES_NOT_EXIST);
@@ -35,10 +33,10 @@ void handle_list_articles(MessageHandler& mh, DatabaseInterface& db) {
 	 mh.send_code(Protocol::ANS_END);
 }
 
-void get_list_newsgroups(MessageHandler& mh, DatabaseInterface& db){
+void get_list_newsgroups(MessageHandler& mh){
 	mh.send_code(Protocol::ANS_LIST_NG);
-	vector<pair<int,string> v = db.list_news_groups();
-	int size = sizeof(v) / sizeof(v[0]);
+	vector<Pair<int,string> v = list_news_groups();
+	int size = v.length();
 	mh.send_int_parameter(size);
 	for(int i = 0; i < size; i++){
 		mh.send_int_parameter(v[i].first);
@@ -47,24 +45,26 @@ void get_list_newsgroups(MessageHandler& mh, DatabaseInterface& db){
 	mh.send_code(Protocol::ANS_END);
 }
 
-void create_newsgroup(MessageHandler& mh, DatabaseInterface& db){
+void create_newsgroup(MessageHandler& mh){
 	mh.send_code(Protocol::ANS_CREATE_NG);
-	if(db.create_news_group(mh.recv_string_parameter())){
-		mh.send_string_parameter(Protocol::ANS_ACK);
+	if(create_news_group(mh.recv_string_parameter())){
+		mh.send_code(Protocol::ANS_ACK);
 	}
 	else{
-		mh.send_string_parameter(ANS_NAK ERR_NG_ALREADY_EXISTS);
+		mh.send_code(Protocol::ANS_NAK);
+		mh.send_code(Protocol::ERR_NG_ALREADY_EXISTS);
 	}
 	mh.send_code(Protocol::ANS_END);
 }
 
-void delete_newsgroup(MessageHandler& mh, DatabaseInterface& db) {
+void delete_newsgroup(MessageHandler& mh){
 	mh.send_code(Protocol::ANS_DELETE_NG);
-	if(db.delete_news_group(mh.recv_int_parameter())){
-		mh.send_string_parameter(Protocol::ANS_ACK);
+	if(delete_news_group(mh.recv_int_parameter())){
+		mh.send_code(Protocol::ANS_ACK);
 	}
 	else{
-		mh.send_string_parameter(ANS_NAK ERR_NG_DOES_NOT_EXIST);
+		mh.send_code(Protocol::ANS_NAK);
+		mh.send_code(Protocol::ERR_NG_DOES_NOT_EXIST);
 	}
 	mh.send_code(Protocol::ANS_END);
 }
@@ -119,7 +119,7 @@ int main(int argc, char* argv[]){
 		cerr << "Server initialization error." << endl;
 		exit(1);
 	}
-	Database db;
+
 	while (true) {
 		auto conn = server.waitForActivity();
 		if (conn != nullptr) {
@@ -128,10 +128,10 @@ int main(int argc, char* argv[]){
 				Protocol nbr = static_cast<Protocol>(mh.recv_code());
 				string result = "";
         switch (nbr) {
-          case Protocol::COM_LIST_NG: get_list_newsgroups(mh, db); break;
-          case Protocol::COM_CREATE_NG: create_newsgroup(mh, db); break;
-          case Protocol::COM_DELETE_NG: delete_newsgroup(mh, db); break;
-					case Protocol::COM_LIST_ART: handle_list_articles(mh, db); break;
+          case Protocol::COM_LIST_NG: get_list_newsgroups(mh); break;
+          case Protocol::COM_CREATE_NG: create_newsgroup(mh); break;
+          case Protocol::COM_DELETE_NG: delete_newsgroup(mh); break;
+					case Protocol::COM_LIST_ART: handle_list_articles(mh); break;
           case Protocol::COM_CREATE_ART: break;
           case Protocol::COM_DELETE_ART: break;
           case Protocol::COM_GET_ART: break;
