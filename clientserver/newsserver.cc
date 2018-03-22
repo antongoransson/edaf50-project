@@ -22,7 +22,15 @@ using std::string;
 
 void handle_list_articles(MessageHandler& mh) {
 	 mh.send_code(Protocol::ANS_LIST_ART);
+	 int nbr = mh.recv_int_parameter();
+	 // pair<vector<pair<int,string>, bool> articles = db.list_articles();
+	 if (!false) {
+	 	mh.send_code(Protocol::ANS_NAK);
+	  mh.send_code(Protocol::ERR_NG_DOES_NOT_EXIST);
+	 } else {
 
+	 }
+	 mh.send_code(Protocol::ANS_END);
 }
 
 int main(int argc, char* argv[]){
