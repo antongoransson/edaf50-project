@@ -2,23 +2,21 @@
 #define ARTICLE_H
 
 #include <iostream>
-using std::string;
-
-class Article
+class Article {
   public:
-    Article(int, int, string, string, string);
+    Article(int, int, std::string, std::string, std::string);
     ~Article();
     int get_id();
     int get_group_id();
-    string get_author();
-    string get_title();
-    string get_text();
+    std::string get_author();
+    std::string get_title();
+    std::string get_text();
   private:
     int id;
     int group_id;
-    string author;
-    string title;
-    string text;
+    std::string author;
+    std::string title;
+    std::string text;
 };
 
 
