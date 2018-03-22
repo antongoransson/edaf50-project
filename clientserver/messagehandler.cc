@@ -19,16 +19,6 @@ using std::shared_ptr;
  */
 MessageHandler::MessageHandler(shared_ptr<Connection>& c): conn(c)  {}
 
-/**
- * Set the log window to use.
- *
- // * @param logWindow
- *            The log window
- */
-// void MessageHandler::setLogWindow(Logger logWindow) {
-// 	this.logWindow = logWindow;
-// }
-
 void MessageHandler::sendByte(int code) {
 	try {
 		conn->write(static_cast<char>(code));
@@ -45,9 +35,8 @@ void MessageHandler::sendByte(int code) {
  * @throws ConnectionClosedException
  *             If the server died
  */
-void MessageHandler::sendCode(int code) {
-	sendByte(code);
-	// logWindow.logCode(code);
+void MessageHandler::sendCode(Protocol code) {
+	sendByte(static_cast<int>(code));
 }
 
 /**
@@ -60,13 +49,9 @@ void MessageHandler::sendCode(int code) {
  */
 void MessageHandler::sendInt(int value) {
 	sendByte((value >> 24) & 0xFF);
-	// logWindow.logByte((value >> 24) & 0xFF);
 	sendByte((value >> 16) & 0xFF);
-	// logWindow.logByte((value >> 16) & 0xFF);
 	sendByte((value >> 8) & 0xFF);
-	// logWindow.logByte((value >> 8) & 0xFF);
 	sendByte(value & 0xFF);
-	// logWindow.logByte(value & 0xFF);
 }
 
 /**
@@ -78,7 +63,7 @@ void MessageHandler::sendInt(int value) {
  *             If the server died
  */
 void MessageHandler::sendIntParameter(int param) {
-	sendCode(static_cast<int>(Protocol::PAR_NUM));
+	sendCode(Protocol::PAR_NUM);
 	sendInt(param);
 }
 
@@ -92,11 +77,10 @@ void MessageHandler::sendIntParameter(int param) {
  */
 void MessageHandler::sendStringParameter(string param) {
 	conn->write('$');
-	sendCode(static_cast<int>(Protocol::PAR_STRING));
+	sendCode(Protocol::PAR_STRING);
 	sendInt(param.length());
 	for (char c: param) {
 		sendByte(c);
-		// logWindow.logChar(param.charAt(i));
 	}
 	sendByte('$');
 }
@@ -109,7 +93,6 @@ void MessageHandler::sendStringParameter(string param) {
  */
 int MessageHandler::recvCode() {
 	unsigned char code = recvByte();
-	// logWindow.logCode(code);
 	return code;
 }
 
@@ -164,7 +147,6 @@ string MessageHandler::recvStringParameter() {
 	for (int i = 1; i <= n; i++) {
 		char ch = static_cast<char>(conn->read());
 		result[i - 1] = ch;
-		// logWindow.logChar(ch);
 	}
 	return result;
 }

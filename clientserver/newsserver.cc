@@ -64,10 +64,11 @@ int main(int argc, char* argv[]){
 		if (conn != nullptr) {
 			try {
 				MessageHandler mh(conn);
-				Protocol nbr = static_cast<Protocol>(mh.recvInt());
+				Protocol nbr = static_cast<Protocol>(mh.recvCode());
+				string result = "";
         switch (nbr) {
-          case Protocol::COM_LIST_NG: cout<< "LIST" <<endl; break;
-          case Protocol::COM_CREATE_NG: break;
+          case Protocol::COM_LIST_NG: mh.sendCode(Protocol::ANS_LIST_NG); mh.sendIntParameter(0);mh.sendCode(Protocol::ANS_END); break;
+          case Protocol::COM_CREATE_NG:result ="CREATE NG"; break;
           case Protocol::COM_DELETE_NG: break;
           case Protocol::COM_LIST_ART: break;
           case Protocol::COM_CREATE_ART: break;
@@ -76,16 +77,6 @@ int main(int argc, char* argv[]){
           case Protocol::COM_END: break;
           default: break;
         }
-				string result ="Good job";
-				// mh.sendStringParameter(result);
-				// if (nbr > 0) {
-				// 	result = "positive";
-				// } else if (nbr == 0) {
-				// 	result = "zero";
-				// } else {
-				// 	result = "negative";
-				// }
-				writeString(conn, result);
 			} catch (ConnectionClosedException&) {
 				server.deregisterConnection(conn);
 				cout << "Client closed connection" << endl;
