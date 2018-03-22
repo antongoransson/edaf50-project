@@ -25,28 +25,39 @@ void handle_list_articles(MessageHandler& mh) {
 
 }
 
-void get_list_newsgroups(){
-	mh.sendCode(Protocol::ANS_LIST_NG);
+void get_list_newsgroups(MessageHandler& mh){
+	mh.send_code(Protocol::ANS_LIST_NG);
 	vector<Pair<int,string> v = list_news_groups();
 	int size = sizeof(v) / sizeof(v[0]);
-	mh.sendIntParameter(size);
+	mh.send_int_parameter(size);
 	result += " ";
 	for(int i = 0; i < size; i++){
-		mh.sendIntParameter(v[i].first);
-		mh.sendStringParameter(v[i].second);
+		mh.send_int_parameter(v[i].first);
+		mh.send_string_parameter(v[i].second);
 	}
-	mh.sendCode(Protocol::ANS_END);
+	mh.send_code(Protocol::ANS_END);
 }
 
-void create_newsgroup(string s){
-	mh.sendCode(Protocol::ANS_CREATE_NG);
-	if(create_news_group(s)){
-		mh.sendStringParameter(ANS_ACK);
+void create_newsgroup(MessageHandler& mh){
+	mh.send_code(Protocol::ANS_CREATE_NG);
+	if(create_news_group(mh.recv_string_parameter())){
+		mh.send_string_parameter(ANS_ACK);
 	}
 	else{
-		mh.sendStringParameter(ANS_NAK ERR_NG_ALREADY_EXISTS);
+		mh.send_string_parameter(ANS_NAK ERR_NG_ALREADY_EXISTS);
 	}
-	mh.sendCode(Protocol::ANS_END);
+	mh.send_code(Protocol::ANS_END);
+}
+
+void delete_newsgroup(MessageHandler& mh){
+	mh.send_code(Protocol::ANS_DELETE_NG);
+	if(delete_news_group(mh.recv_int_parameter())){
+		mh.send_string_parameter(ANS_ACK);
+	}
+	else{
+		mh.send_string_parameter(ANS_NAK ERR_NG_DOES_NOT_EXIST);
+	}
+	mh.send_code(Protocol::ANS_END);
 }
 
 int main(int argc, char* argv[]){
@@ -77,12 +88,9 @@ int main(int argc, char* argv[]){
 				Protocol nbr = static_cast<Protocol>(mh.recv_code());
 				string result = "";
         switch (nbr) {
-          case Protocol::COM_LIST_NG: get_list_newsgroups(); break;
-
-          case Protocol::COM_CREATE_NG: create_newsgroup(recvStringParameter()); break;
-
-          case Protocol::COM_DELETE_NG: break;
-
+          case Protocol::COM_LIST_NG: get_list_newsgroups(mh); break;
+          case Protocol::COM_CREATE_NG: create_newsgroup(mh); break;
+          case Protocol::COM_DELETE_NG: delete_newsgroup(mh); break;
 					case Protocol::COM_LIST_ART: handle_list_articles(mh); break;
           case Protocol::COM_CREATE_ART: break;
           case Protocol::COM_DELETE_ART: break;
