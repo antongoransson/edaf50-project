@@ -40,7 +40,7 @@ void get_list_newsgroups(MessageHandler& mh, DatabaseInterface& db){
 	vector<pair<int,string>> v = db.list_news_groups();
 	int size = v.size();
 	mh.send_int_parameter(size);
-	for(int i = 0; i < size; i++){
+	for(int i = 0; i < size; i++) {
 		mh.send_int_parameter(v[i].first);
 		mh.send_string_parameter(v[i].second);
 	}

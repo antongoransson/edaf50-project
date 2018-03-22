@@ -10,7 +10,7 @@ using std::string;
 using std::vector;
 using std::pair;
 
-class Database : public DatabaseInterface{
+class Database: public DatabaseInterface {
 public:
   Database();
   vector<pair<int,string>> list_news_groups() override;
