@@ -75,7 +75,7 @@ void handle_delete_news_group(MessageHandler& mh, DatabaseInterface& db){
 
 void handle_create_article(MessageHandler& mh, DatabaseInterface& db){
 	mh.send_code(Protocol::ANS_CREATE_ART);
-	if(create_article(mh.recv_int_parameter(), mh.recv_string_parameter(), mh.recv_string_parameter(), mh.recv_string_parameter())){
+	if(db.create_article(mh.recv_int_parameter(), mh.recv_string_parameter(), mh.recv_string_parameter(), mh.recv_string_parameter())){
 		mh.send_code(Protocol::ANS_ACK);
 	}
 	else{
@@ -87,7 +87,7 @@ void handle_create_article(MessageHandler& mh, DatabaseInterface& db){
 
 void handle_delete_article(MessageHandler& mh, DatabaseInterface& db){
 	mh.send_code(Protocol::ANS_DELETE_ART);
-	int delete_int = delete_article(mh.recv_int_parameter(), mh.recv_int_parameter());
+	int delete_int = db.delete_article(mh.recv_int_parameter(), mh.recv_int_parameter());
 	if(delete_int == 1){
 		mh.send_code(Protocol::ANS_ACK);
 	}
