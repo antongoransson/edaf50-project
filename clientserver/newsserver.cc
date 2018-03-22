@@ -3,7 +3,7 @@
 #include "connection.h"
 #include "protocol.h"
 #include "connectionclosedexception.h"
-
+#include "messagehandler.h"
 #include <memory>
 #include <iostream>
 #include <string>
@@ -63,7 +63,9 @@ int main(int argc, char* argv[]){
 		auto conn = server.waitForActivity();
 		if (conn != nullptr) {
 			try {
-				Protocol nbr = static_cast<Protocol>(readNumber(conn));
+				MessageHandler mh(conn);
+				Protocol nbr = static_cast<Protocol>(mh.recvCode());
+				string result = "";
         switch (nbr) {
           case Protocol::COM_LIST_NG:
 						string result = "ANS_LIST_NG";
@@ -93,9 +95,15 @@ int main(int argc, char* argv[]){
 						break;
 
           case Protocol::COM_DELETE_NG:
-					
+
 
 					break;
+
+					case Protocol::COM_LIST_NG: mh.sendCode(Protocol::ANS_LIST_NG); mh.sendIntParameter(0);mh.sendCode(Protocol::ANS_END); break;
+          case Protocol::COM_CREATE_NG:result ="CREATE NG"; break;
+          case Protocol::COM_DELETE_NG: break;
+
+
           case Protocol::COM_LIST_ART: break;
           case Protocol::COM_CREATE_ART: break;
           case Protocol::COM_DELETE_ART: break;
@@ -103,21 +111,13 @@ int main(int argc, char* argv[]){
           case Protocol::COM_END: break;
           default: break;
         }
-				string result ="Good job";
-				// if (nbr > 0) {
-				// 	result = "positive";
-				// } else if (nbr == 0) {
-				// 	result = "zero";
-				// } else {
-				// 	result = "negative";
-				// }
-				writeString(conn, result);
 			} catch (ConnectionClosedException&) {
 				server.deregisterConnection(conn);
 				cout << "Client closed connection" << endl;
 			}
 		} else {
 			conn = make_shared<Connection>();
+
 			server.registerConnection(conn);
 			cout << "New client connects" << endl;
 		}
