@@ -1,19 +1,17 @@
 #ifndef NEWSGROUP_H
 #define NEWSGROUP_H
 
-#include <iostream>
-using std::string;
+#include <string>
 
-class NewsGroup
-{
+class NewsGroup {
   public:
-    NewsGroup(string, int id);
+    NewsGroup(std::string, int id);
     ~NewsGroup();
     int get_id();
-    string get_name();
+    std::string get_name();
   private:
     int id;
-    string name;
+    std::string name;
 };
 
 

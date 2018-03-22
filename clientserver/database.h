@@ -1,7 +1,3 @@
-#include <string>
-#include <vector>
-#include <utility>
-#include <map>
 #include "article.h"
 #include "newsgroup.h"
 #include "databaseinterface.h"

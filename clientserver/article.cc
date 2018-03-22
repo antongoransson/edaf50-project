@@ -1,11 +1,9 @@
-#include <iostream>
 #include "article.h"
 
 using std::string;
 
 Article::Article(int id_i = -1, int group_id_i = -1, string author_i = "", string title_i = "", string text_i = ""):
       id(id_i), group_id(group_id_i), author(author_i), title(title_i), text(text_i){}
-
 
 Article::~Article(){}
 

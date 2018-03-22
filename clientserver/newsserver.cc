@@ -11,6 +11,8 @@
 #include <cstdlib>
 #include "databaseinterface.h"
 #include "database.h"
+#include "article.h"
+#include "newsgroup.h"
 
 using std::cout;
 using std::endl;

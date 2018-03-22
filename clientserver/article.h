@@ -1,7 +1,7 @@
 #ifndef ARTICLE_H
 #define ARTICLE_H
 
-#include <iostream>
+#include <string>
 class Article {
   public:
     Article(int, int, std::string, std::string, std::string);
