@@ -76,13 +76,11 @@ void MessageHandler::send_int_parameter(int param) {
  *             If the server died
  */
 void MessageHandler::send_string_parameter(string param) {
-	conn->write('$');
 	send_code(Protocol::PAR_STRING);
 	send_int(param.length());
 	for (char c: param) {
 		send_byte(c);
 	}
-	send_byte('$');
 }
 /**
  * Receive a command code or an error code from the server.

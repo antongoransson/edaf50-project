@@ -10,8 +10,8 @@ class NewsGroup {
     int get_id();
     std::string get_name();
   private:
-    int id;
     std::string name;
+    int id;
 };
 
 

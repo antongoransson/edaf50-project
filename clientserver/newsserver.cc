@@ -27,17 +27,16 @@ void handle_list_articles(MessageHandler& mh, DatabaseInterface& db) {
 	 int nbr = mh.recv_int_parameter();
 	 // pair<vector<pair<int,string>, bool> articles = db.list_articles();
 	 if (!false) {
-	 	mh.send_code(Protocol::ANS_NAK);
-	  mh.send_code(Protocol::ERR_NG_DOES_NOT_EXIST);
+		 	mh.send_code(Protocol::ANS_NAK);
+		  mh.send_code(Protocol::ERR_NG_DOES_NOT_EXIST);
 	 } else {
-
 	 }
 	 mh.send_code(Protocol::ANS_END);
 }
 
-void get_list_newsgroups(MessageHandler& mh, DatabaseInterface& db){
+void get_list_newsgroups(MessageHandler& mh, DatabaseInterface& db) {
 	mh.send_code(Protocol::ANS_LIST_NG);
-	vector<pair<int,string>> v = db.list_news_groups();
+	vector<pair<int, string>> v = db.list_news_groups();
 	int size = v.size();
 	mh.send_int_parameter(size);
 	for(int i = 0; i < size; i++) {
@@ -47,21 +46,20 @@ void get_list_newsgroups(MessageHandler& mh, DatabaseInterface& db){
 	mh.send_code(Protocol::ANS_END);
 }
 
-void handle_create_news_group(MessageHandler& mh, DatabaseInterface& db){
+void handle_create_news_group(MessageHandler& mh, DatabaseInterface& db) {
 	mh.send_code(Protocol::ANS_CREATE_NG);
-	if(db.create_news_group(mh.recv_string_parameter())){
+	if (db.create_news_group(mh.recv_string_parameter())) {
 		mh.send_code(Protocol::ANS_ACK);
-	}
-	else{
+	} else {
 		mh.send_code(Protocol::ANS_NAK);
 		mh.send_code(Protocol::ERR_NG_ALREADY_EXISTS);
 	}
 	mh.send_code(Protocol::ANS_END);
 }
 
-void handle_delete_news_group(MessageHandler& mh, DatabaseInterface& db){
+void handle_delete_news_group(MessageHandler& mh, DatabaseInterface& db) {
 	mh.send_code(Protocol::ANS_DELETE_NG);
-	if(db.delete_news_group(mh.recv_int_parameter())){
+	if(db.delete_news_group(mh.recv_int_parameter())) {
 		mh.send_code(Protocol::ANS_ACK);
 	}
 	else{
@@ -71,9 +69,9 @@ void handle_delete_news_group(MessageHandler& mh, DatabaseInterface& db){
 	mh.send_code(Protocol::ANS_END);
 }
 
-void handle_create_article(MessageHandler& mh, DatabaseInterface& db){
+void handle_create_article(MessageHandler& mh, DatabaseInterface& db) {
 	mh.send_code(Protocol::ANS_CREATE_ART);
-	if(db.create_article(mh.recv_int_parameter(), mh.recv_string_parameter(), mh.recv_string_parameter(), mh.recv_string_parameter())){
+	if(db.create_article(mh.recv_int_parameter(), mh.recv_string_parameter(), mh.recv_string_parameter(), mh.recv_string_parameter())) {
 		mh.send_code(Protocol::ANS_ACK);
 	}
 	else{
@@ -83,13 +81,13 @@ void handle_create_article(MessageHandler& mh, DatabaseInterface& db){
 	mh.send_code(Protocol::ANS_END);
 }
 
-void handle_delete_article(MessageHandler& mh, DatabaseInterface& db){
+void handle_delete_article(MessageHandler& mh, DatabaseInterface& db) {
 	mh.send_code(Protocol::ANS_DELETE_ART);
 	int delete_int = db.delete_article(mh.recv_int_parameter(), mh.recv_int_parameter());
-	if(delete_int == 1){
+	if(delete_int == 1) {
 		mh.send_code(Protocol::ANS_ACK);
 	}
-	else if(delete_int == 2){
+	else if(delete_int == 2) {
 		mh.send_code(Protocol::ANS_NAK);
 		mh.send_code(Protocol::ERR_ART_DOES_NOT_EXIST);
 	}
@@ -100,7 +98,7 @@ void handle_delete_article(MessageHandler& mh, DatabaseInterface& db){
 	mh.send_code(Protocol::ANS_END);
 }
 
-int main(int argc, char* argv[]){
+int main(int argc, char* argv[]) {
 	if (argc != 2) {
 		cerr << "Usage: myserver port-number" << endl;
 		exit(1);
@@ -125,8 +123,8 @@ int main(int argc, char* argv[]){
 		if (conn != nullptr) {
 			try {
 				MessageHandler mh(conn);
-				Protocol nbr = static_cast<Protocol>(mh.recv_code());
-				string result = "";
+				int code = mh.recv_code();
+				Protocol nbr = static_cast<Protocol>(code);
         switch (nbr) {
           case Protocol::COM_LIST_NG: get_list_newsgroups(mh, db); break;
           case Protocol::COM_CREATE_NG: handle_create_news_group(mh, db); break;
@@ -138,13 +136,13 @@ int main(int argc, char* argv[]){
           case Protocol::COM_END: break;
           default: break;
         }
+
 			} catch (ConnectionClosedException&) {
 				server.deregisterConnection(conn);
 				cout << "Client closed connection" << endl;
 			}
 		} else {
 			conn = make_shared<Connection>();
-
 			server.registerConnection(conn);
 			cout << "New client connects" << endl;
 		}

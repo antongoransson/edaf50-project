@@ -5,11 +5,10 @@ using std::pair;
 using std::map;
 using std::make_pair;
 
-Database::Database(){}
+Database::Database(): ngCount(0), artCount(0) {}
 
 vector<pair<int,string>> Database::list_news_groups(){
   vector<pair<int,string>> output;
-
   for(auto it = news_groups.begin(); it != news_groups.end();++it){
     output.push_back(make_pair(it->second.get_id(), it->second.get_name()));
   }
@@ -34,7 +33,6 @@ bool Database::create_news_group(string name){
       return false;
     }
   }
-
   NewsGroup ng(name, ngCount);
   news_groups.emplace(ngCount, ng);
   ++ngCount;
