@@ -1,13 +1,4 @@
-#include <string>
-#include <vector>
-#include <utility>
-#include <iterator>
-#include <map>
 #include "database.h"
-#include "databaseinterface.h"
-#include "newsgroup.h"
-#include "article.h"
-
 using std::string;
 using std::vector;
 using std::pair;
