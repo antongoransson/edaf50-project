@@ -1,13 +1,13 @@
-#ifndef GROUP_H
-#define GROUP_H
+#ifndef NEWSGROUP_H
+#define NEWSGROUP_H
 
 #include <iostream>
 
-class Group
+class NewsGroup
 {
   public:
-    Group(std::String, int id);
-    ~Group();
+    NewsGroup(std::String, int id);
+    ~NewsGroup();
     int get_id();
     std::String get_name();
   private:
