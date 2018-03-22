@@ -59,16 +59,16 @@ bool Database::delete_news_group(int grpID){
   return true;
 }
 
-bool Database::delete_article(int grpID, int artID){
+int Database::delete_article(int grpID, int artID){
   if(articles.find(grpID) == articles.end()){
-    return false;
+    return 3;
   }
   if(articles.at(grpID).find(grpID) == articles.at(grpID).end()){
-    return false;
+    return 2;
   }
 
   articles.at(grpID).erase(artID);
-  return true;
+  return 1;
 }
 
 pair<Article, bool> Database::get_article(int grpID, int artID){
