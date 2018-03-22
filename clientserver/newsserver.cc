@@ -18,25 +18,11 @@ using std::exception;
 using std::shared_ptr;
 using std::make_shared;
 using std::string;
-/*
- * Read an integer from a client.
- */
-int readNumber(const shared_ptr<Connection>& conn) {
-	unsigned char byte1 = conn->read();
-	unsigned char byte2 = conn->read();
-	unsigned char byte3 = conn->read();
-	unsigned char byte4 = conn->read();
-	return (byte1 << 24) | (byte2 << 16) | (byte3 << 8) | byte4;
-}
 
-/*
- * Send a string to a client.
- */
-void writeString(const shared_ptr<Connection>& conn, const string& s) {
-	for (char c : s) {
-		conn->write(c);
-	}
-	conn->write('$');
+
+void handle_list_articles(MessageHandler& mh) {
+	 mh.send_code(Protocol::ANS_LIST_ART);
+
 }
 
 int main(int argc, char* argv[]){
@@ -64,13 +50,13 @@ int main(int argc, char* argv[]){
 		if (conn != nullptr) {
 			try {
 				MessageHandler mh(conn);
-				Protocol nbr = static_cast<Protocol>(mh.recvCode());
+				Protocol nbr = static_cast<Protocol>(mh.recv_code());
 				string result = "";
         switch (nbr) {
-          case Protocol::COM_LIST_NG: mh.sendCode(Protocol::ANS_LIST_NG); mh.sendIntParameter(0);mh.sendCode(Protocol::ANS_END); break;
+          case Protocol::COM_LIST_NG: mh.send_code(Protocol::ANS_LIST_NG); mh.send_int_parameter(0); mh.send_code(Protocol::ANS_END); break;
           case Protocol::COM_CREATE_NG:result ="CREATE NG"; break;
           case Protocol::COM_DELETE_NG: break;
-          case Protocol::COM_LIST_ART: break;
+          case Protocol::COM_LIST_ART: handle_list_articles(mh); break;
           case Protocol::COM_CREATE_ART: break;
           case Protocol::COM_DELETE_ART: break;
           case Protocol::COM_GET_ART: break;
