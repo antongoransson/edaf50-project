@@ -10,8 +10,8 @@ Database::Database(){}
 vector<pair<int,string>> Database::list_news_groups(){
   vector<pair<int,string>> output;
 
-  for(auto it = news_groups.begin(); it != news_groups.end();it++){
-    vector.push_back(make_pair(*it.get_id(), *it.get_name()));
+  for(auto it = news_groups.begin(); it != news_groups.end();++it){
+    output.push_back(make_pair(*it.get_id(), *it.get_name()));
   }
   return output;
 }
@@ -22,14 +22,14 @@ pair<vector<pair<int,string>,bool>> Database::list_articles(int grpID){
     return make_pair(output,false;);
   }
 
-  for(auto it = news_groups.at(grpID).begin(); it != news_groups.at(grpID).end();it++){
-    vector.push_back(make_pair(*it.get_id(), *it.get_title()));
+  for(auto it = news_groups.at(grpID).begin(); it != news_groups.at(grpID).end();++it){
+    output.push_back(make_pair(*it.get_id(), *it.get_title()));
   }
   return make_pair(output,true);
 }
 
 bool Database::create_news_group(string name){
-  for(auto it = news_groups.begin(); it != news_groups.end();it++){
+  for(auto it = news_groups.begin(); it != news_groups.end();++it){
     if(*it.get_name() == name){
       return false;
     }
