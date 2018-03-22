@@ -3,6 +3,7 @@ using std::string;
 using std::vector;
 using std::pair;
 using std::map;
+using std::make_pair;
 
 Database::Database(){}
 
