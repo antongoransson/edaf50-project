@@ -1,4 +1,6 @@
 /* myserver.cc: sample server program */
+#include "databaseinterface.h"
+#include "database.h"
 #include "server.h"
 #include "connection.h"
 #include "protocol.h"
@@ -9,10 +11,6 @@
 #include <string>
 #include <stdexcept>
 #include <cstdlib>
-#include "databaseinterface.h"
-#include "database.h"
-#include "article.h"
-#include "newsgroup.h"
 
 using std::cout;
 using std::endl;

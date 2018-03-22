@@ -14,6 +14,7 @@ using std::pair;
 
 class DatabaseInterface {
 public:
+  virtual ~DatabaseInterface() = default;
   virtual vector<pair<int,string>> list_news_groups();
   virtual pair<vector<pair<int,string>>,bool> list_articles(int grpID);
   virtual bool create_news_group(string name);
