@@ -1,13 +1,4 @@
-#include <string>
-#include <vector>
-#include <utility>
-#include <iterator>
-#include <map>
 #include "database.h"
-#include "databaseinterface.h"
-#include "newsgroup.h"
-#include "article.h"
-
 using std::string;
 using std::vector;
 using std::pair;
@@ -15,7 +6,7 @@ using std::map;
 
 Database::Database(){}
 
-vector<pair<int,string> Database::list_news_groups(){
+vector<pair<int,string>> Database::list_news_groups(){
   vector<pair<int,string> output;
 
   for(ForwardIterator it = news_groups.begin(); it != news_groups.end();it++){
@@ -24,7 +15,7 @@ vector<pair<int,string> Database::list_news_groups(){
   return output;
 }
 
-pair<vector<pair<int,string>,bool> Database::list_articles(int grpID){
+pair<vector<pair<int,string>,bool>> Database::list_articles(int grpID){
   vector<pair<int,string> output;
   if(articles.find(grpID) == articles.end()){
     return make_pair(output,false;);
