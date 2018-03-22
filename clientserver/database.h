@@ -15,8 +15,8 @@ public:
   Database();
 
 private:
-  Map<int,NewsGroup> news_groups;
-  Map<int,Map<int,Article>> articles;
+  map<int,NewsGroup> news_groups;
+  map<int,Map<int,Article>> articles;
   int ngCount = 0;
   int artCount = 0;
 };
