@@ -14,8 +14,8 @@ class Article {
   private:
     int id;
     int group_id;
-    std::string author;
     std::string title;
+    std::string author;
     std::string text;
 };
 

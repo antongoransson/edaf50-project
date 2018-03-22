@@ -44,7 +44,6 @@ bool Database::create_article(int grpID, string name, string author, string text
   if(news_groups.find(grpID) == news_groups.end()){
     return false;
   }
-
   Article art(artCount, grpID, name, author, text);
   if (articles.count(grpID) == 0) {
     articles[grpID] = map<int, Article>();
@@ -67,10 +66,9 @@ int Database::delete_article(int grpID, int artID){
   if(articles.find(grpID) == articles.end()){
     return 3;
   }
-  if(articles.at(grpID).find(grpID) == articles.at(grpID).end()){
+  if(articles.at(grpID).find(artID) == articles.at(grpID).end()){
     return 2;
   }
-
   articles.at(grpID).erase(artID);
   return 1;
 }
@@ -80,7 +78,7 @@ pair<Article, int> Database::get_article(int grpID, int artID){
   if(articles.find(grpID) == articles.end()){
     return make_pair(art, 3);
   }
-  if(articles.at(grpID).find(grpID) == articles.at(grpID).end()){
+  if(articles.at(grpID).find(artID) == articles.at(grpID).end()){
     return make_pair(art, 2);
   }
 

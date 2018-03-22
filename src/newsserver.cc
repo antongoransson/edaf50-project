@@ -34,9 +34,9 @@ void handle_list_articles(MessageHandler& mh, DatabaseInterface& db) {
 		 vector<pair<int,string>>v = articles.first;
 		 int size = v.size();
 		 mh.send_int_parameter(size);
-		 for (int i = 0; i != size; ++i) {
-	 		mh.send_int_parameter(v[i].first);
-	 		mh.send_string_parameter(v[i].second);
+		 for (auto p: v) {
+	 		mh.send_int_parameter(p.first);
+	 		mh.send_string_parameter(p.second);
 	 	}
 	 }
 	 mh.send_code(Protocol::ANS_END);
@@ -47,9 +47,9 @@ void get_list_newsgroups(MessageHandler& mh, DatabaseInterface& db) {
 	vector<pair<int, string>> v = db.list_news_groups();
 	int size = v.size();
 	mh.send_int_parameter(size);
-	for (int i = 0; i < size; i++) {
-		mh.send_int_parameter(v[i].first);
-		mh.send_string_parameter(v[i].second);
+	for (auto p: v) {
+		mh.send_int_parameter(p.first);
+		mh.send_string_parameter(p.second);
 	}
 	mh.send_code(Protocol::ANS_END);
 }
@@ -67,10 +67,10 @@ void handle_create_news_group(MessageHandler& mh, DatabaseInterface& db) {
 
 void handle_delete_news_group(MessageHandler& mh, DatabaseInterface& db) {
 	mh.send_code(Protocol::ANS_DELETE_NG);
-	if(db.delete_news_group(mh.recv_int_parameter())) {
+	int grpID = mh.recv_int_parameter();
+	if (db.delete_news_group(grpID)) {
 		mh.send_code(Protocol::ANS_ACK);
-	}
-	else{
+	}	else {
 		mh.send_code(Protocol::ANS_NAK);
 		mh.send_code(Protocol::ERR_NG_DOES_NOT_EXIST);
 	}
@@ -83,7 +83,7 @@ void handle_create_article(MessageHandler& mh, DatabaseInterface& db) {
 	string title = mh.recv_string_parameter();
 	string author = mh.recv_string_parameter();
 	string text = mh.recv_string_parameter();
-	if(db.create_article(grpID, title, author, text)) {
+	if (db.create_article(grpID, title, author, text)) {
 		mh.send_code(Protocol::ANS_ACK);
 	}	else {
 		mh.send_code(Protocol::ANS_NAK);
@@ -97,7 +97,7 @@ void handle_get_article(MessageHandler& mh, DatabaseInterface& db) {
 	int grpID = mh.recv_int_parameter();
 	int artID = mh.recv_int_parameter();
 	pair<Article, int> p =  db.get_article(grpID, artID);
-	if(p.second == 1) {
+	if (p.second == 1) {
 		mh.send_code(Protocol::ANS_ACK);
 		Article a = p.first;
 		mh.send_string_parameter(a.get_title());
@@ -116,10 +116,12 @@ void handle_get_article(MessageHandler& mh, DatabaseInterface& db) {
 
 void handle_delete_article(MessageHandler& mh, DatabaseInterface& db) {
 	mh.send_code(Protocol::ANS_DELETE_ART);
-	int delete_int = db.delete_article(mh.recv_int_parameter(), mh.recv_int_parameter());
-	if(delete_int == 1) {
+	int grpID = mh.recv_int_parameter();
+	int artID = mh.recv_int_parameter();
+	int delete_int = db.delete_article(grpID, artID);
+	if (delete_int == 1) {
 		mh.send_code(Protocol::ANS_ACK);
-	}	else if(delete_int == 2) {
+	}	else if (delete_int == 2) {
 		mh.send_code(Protocol::ANS_NAK);
 		mh.send_code(Protocol::ERR_ART_DOES_NOT_EXIST);
 	} else {
