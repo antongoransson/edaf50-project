@@ -39,6 +39,30 @@ void writeString(const shared_ptr<Connection>& conn, const string& s) {
 	conn->write('$');
 }
 
+void get_list_newsgroups(){
+	mh.sendCode(Protocol::ANS_LIST_NG);
+	vector<Pair<int,string> v = list_news_groups();
+	int size = sizeof(v) / sizeof(v[0]);
+	mh.sendIntParameter(size);
+	result += " ";
+	for(int i = 0; i < size; i++){
+		mh.sendIntParameter(v[i].first);
+		mh.sendStringParameter(v[i].second);
+	}
+	mh.sendCode(Protocol::ANS_END);
+}
+
+void create_newsgroup(string s){
+	mh.sendCode(Protocol::ANS_CREATE_NG);
+	if(create_news_group(s)){
+		mh.sendStringParameter(ANS_ACK);
+	}
+	else{
+		mh.sendStringParameter(ANS_NAK ERR_NG_ALREADY_EXISTS);
+	}
+	mh.sendCode(Protocol::ANS_END);
+}
+
 int main(int argc, char* argv[]){
 	if (argc != 2) {
 		cerr << "Usage: myserver port-number" << endl;
@@ -67,42 +91,11 @@ int main(int argc, char* argv[]){
 				Protocol nbr = static_cast<Protocol>(mh.recvCode());
 				string result = "";
         switch (nbr) {
-          case Protocol::COM_LIST_NG:
-						string result = "ANS_LIST_NG";
-						result += " ";
-						vector<Pair<int,string> v = list_news_groups();
-						int size = sizeof(v) / sizeof(v[0]);
-						result += size;
-						result += " ";
-						for(int i = 0; i < size; i++){
-							result += v[i].first;
-							result += " ";
-							result += v[i].second;
-							result += " ";
-						}
-						result += "ANS_END";
-						break;
+          case Protocol::COM_LIST_NG: get_list_newsgroups(); break;
 
-          case Protocol::COM_CREATE_NG:
-						string result = "ANS_CREATE_NG";
-						if(create_news_group(string_p)){
-							result += "ANS_ACK";
-						}
-						else{
-							result += "ANS_NAK ERR_NG_ALREADY_EXISTS";
-						}
-						result += ANS_END;
-						break;
+          case Protocol::COM_CREATE_NG: create_newsgroup(recvStringParameter()); break;
 
-          case Protocol::COM_DELETE_NG:
-
-
-					break;
-
-					case Protocol::COM_LIST_NG: mh.sendCode(Protocol::ANS_LIST_NG); mh.sendIntParameter(0);mh.sendCode(Protocol::ANS_END); break;
-          case Protocol::COM_CREATE_NG:result ="CREATE NG"; break;
           case Protocol::COM_DELETE_NG: break;
-
 
           case Protocol::COM_LIST_ART: break;
           case Protocol::COM_CREATE_ART: break;
