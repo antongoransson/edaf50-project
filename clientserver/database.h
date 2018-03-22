@@ -18,4 +18,4 @@ private:
   Map<int,Map<int,Article>> articles;
   int ngCount = 0;
   int artCount = 0;
-}
+};
