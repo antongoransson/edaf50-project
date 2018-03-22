@@ -2,6 +2,7 @@
 #include <vector>
 #include <utility>
 #include <iterator>
+#include <map>
 #include "database.h"
 #include "databaseinterface.h"
 #include "newsgroup.h"
@@ -9,13 +10,13 @@
 
 using std::string;
 using std::vector;
-using std::Pair;
+using std::pair;
 using std::map;
 
 Database::Database(){}
 
-vector<Pair<int,string> Database::list_news_groups(){
-  vector<Pair<int,string> output;
+vector<pair<int,string> Database::list_news_groups(){
+  vector<pair<int,string> output;
 
   for(ForwardIterator it = news_groups.begin(); it != news_groups.end();it++){
     vector.add(make_pair(*it.get_id(), *it.get_name()));
@@ -23,8 +24,8 @@ vector<Pair<int,string> Database::list_news_groups(){
   return output;
 }
 
-Pair<vector<Pair<int,string>,bool> Database::list_articles(int grpID){
-  vector<Pair<int,string> output;
+pair<vector<pair<int,string>,bool> Database::list_articles(int grpID){
+  vector<pair<int,string> output;
   if(articles.find(grpID) == articles.end()){
     return make_pair(output,false;);
   }
@@ -79,7 +80,7 @@ bool Database::delete_article(int grpID, int artID){
   return true;
 }
 
-Pair<Article, bool> Database::get_article(int grpID, int artID){
+pair<Article, bool> Database::get_article(int grpID, int artID){
   Article art;
   if(articles.find(grpID) == articles.end()){
     return make_pair(art, false);
@@ -87,7 +88,7 @@ Pair<Article, bool> Database::get_article(int grpID, int artID){
   if(articles.at(grpID).find(grpID) == articles.at(grpID).end()){
     return make_pair(art,false);
   }
-  
+
   art = articles.at(grpID).at(artID);
   return make_pair(art,true);
 }
