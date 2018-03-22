@@ -14,7 +14,7 @@ class Database : public DatabaseInterface{
 public:
   Database();
   vector<pair<int,string>> list_news_groups();
-  pair<vector<pair<int,string>, bool>> list_articles(int grpID);
+  pair<vector<pair<int,string>>, bool> list_articles(int grpID);
   bool create_news_group(string name);
   bool create_article(int grpID, string name, string author, string text);
   bool delete_news_group(int grpID);
