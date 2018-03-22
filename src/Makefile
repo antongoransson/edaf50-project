@@ -41,7 +41,7 @@ libclientserver.a: connection.o server.o
 
 # Phony targets
 .PHONY: all clean distclean
-
+ 
 # Standard clean
 clean:
 	rm -f *.o $(PROGS)
@@ -49,6 +49,9 @@ clean:
 distclean: clean
 	-rm *.d libclientserver.a
 
+install:
+	cp newsserver ../bin/
+	cp newsclient ../bin/
 
 # Include the *.d files
 SRC = $(wildcard *.cc)
