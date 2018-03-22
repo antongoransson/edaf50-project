@@ -1,8 +1,8 @@
 #include "newsgroup.h"
 #include <iostream>
+using std::string;
 
-
-NewsGroup::NewsGroup(std::String namei, int idi):name(namei), id(idi){}
+NewsGroup::NewsGroup(string namei, int idi):name(namei), id(idi){}
 
 NewsGroup::~NewsGroup(){}
 
@@ -10,6 +10,6 @@ int NewsGroup::get_id(){
   return id;
 }
 
-std::String NewsGroup::get_name(){
+string NewsGroup::get_name(){
   return name;
 }
