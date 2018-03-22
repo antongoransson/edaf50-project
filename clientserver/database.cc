@@ -17,14 +17,15 @@ vector<pair<int,string>> Database::list_news_groups(){
 
 pair<vector<pair<int,string>>,bool> Database::list_articles(int grpID){
   vector<pair<int,string>> output;
-  if(articles.find(grpID) == articles.end()){
-    return make_pair(output,false);
+  if(news_groups.find(grpID) == news_groups.end()){
+    return make_pair(output, false);
   }
-
-  for(auto it = articles.at(grpID).begin(); it != articles.at(grpID).end();++it){
-    output.push_back(make_pair(it->second.get_id(), it->second.get_title()));
+  if (articles.count(grpID) == 1 && articles.at(grpID).size() > 0) {
+    for(auto it = articles.at(grpID).begin(); it != articles.at(grpID).end(); ++it) {
+      output.push_back(make_pair(it->second.get_id(), it->second.get_title()));
+    }
   }
-  return make_pair(output,true);
+  return make_pair(output, true);
 }
 
 bool Database::create_news_group(string name){
@@ -38,12 +39,16 @@ bool Database::create_news_group(string name){
   ++ngCount;
   return true;
 }
-bool Database::create_article(int grpID, string name, string author, string text){
-  if(articles.find(grpID) == articles.end()){
+
+bool Database::create_article(int grpID, string name, string author, string text) {
+  if(news_groups.find(grpID) == news_groups.end()){
     return false;
   }
 
   Article art(artCount, grpID, name, author, text);
+  if (articles.count(grpID) == 0) {
+    articles[grpID] = map<int, Article>();
+  }
   articles.at(grpID).emplace(artCount, art);
   ++artCount;
   return true;
@@ -70,15 +75,15 @@ int Database::delete_article(int grpID, int artID){
   return 1;
 }
 
-pair<Article, bool> Database::get_article(int grpID, int artID){
+pair<Article, int> Database::get_article(int grpID, int artID){
   Article art;
   if(articles.find(grpID) == articles.end()){
-    return make_pair(art, false);
+    return make_pair(art, 3);
   }
   if(articles.at(grpID).find(grpID) == articles.at(grpID).end()){
-    return make_pair(art,false);
+    return make_pair(art, 2);
   }
 
   art = articles.at(grpID).at(artID);
-  return make_pair(art,true);
+  return make_pair(art, 1);
 }

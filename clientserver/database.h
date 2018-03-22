@@ -19,10 +19,10 @@ public:
   bool create_article(int grpID, string name, string author, string text) override;
   bool delete_news_group(int grpID) override;
   int delete_article(int grpID, int artID) override;
-  pair<Article,bool> get_article(int grpID, int artID) override;
+  pair<Article, int> get_article(int grpID, int artID) override;
 private:
-  map<int,NewsGroup> news_groups;
-  map<int,map<int,Article>> articles;
+  map<int, NewsGroup> news_groups;
+  map<int, map<int, Article>> articles;
   int ngCount;
   int artCount;
 };

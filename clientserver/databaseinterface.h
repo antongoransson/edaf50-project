@@ -21,6 +21,6 @@ public:
   virtual bool create_article(int grpID, string name, string author, string text) = 0;
   virtual bool delete_news_group(int grpID) = 0;
   virtual int delete_article(int grpID, int artID) = 0;
-  virtual pair<Article,bool> get_article(int grpID, int artID) = 0;
+  virtual pair<Article, int> get_article(int grpID, int artID) = 0;
 };
 #endif

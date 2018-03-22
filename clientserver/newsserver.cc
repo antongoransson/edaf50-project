@@ -25,11 +25,19 @@ using std::string;
 void handle_list_articles(MessageHandler& mh, DatabaseInterface& db) {
 	 mh.send_code(Protocol::ANS_LIST_ART);
 	 int nbr = mh.recv_int_parameter();
-	 // pair<vector<pair<int,string>, bool> articles = db.list_articles();
-	 if (!false) {
+	 pair<vector<pair<int,string>>, bool> articles = db.list_articles(nbr);
+	 if (!articles.second) {
 		 	mh.send_code(Protocol::ANS_NAK);
 		  mh.send_code(Protocol::ERR_NG_DOES_NOT_EXIST);
 	 } else {
+		 mh.send_code(Protocol::ANS_ACK);
+		 vector<pair<int,string>>v = articles.first;
+		 int size = v.size();
+		 mh.send_int_parameter(size);
+		 for (int i = 0; i != size; ++i) {
+	 		mh.send_int_parameter(v[i].first);
+	 		mh.send_string_parameter(v[i].second);
+	 	}
 	 }
 	 mh.send_code(Protocol::ANS_END);
 }
@@ -39,7 +47,7 @@ void get_list_newsgroups(MessageHandler& mh, DatabaseInterface& db) {
 	vector<pair<int, string>> v = db.list_news_groups();
 	int size = v.size();
 	mh.send_int_parameter(size);
-	for(int i = 0; i < size; i++) {
+	for (int i = 0; i < size; i++) {
 		mh.send_int_parameter(v[i].first);
 		mh.send_string_parameter(v[i].second);
 	}
@@ -71,12 +79,37 @@ void handle_delete_news_group(MessageHandler& mh, DatabaseInterface& db) {
 
 void handle_create_article(MessageHandler& mh, DatabaseInterface& db) {
 	mh.send_code(Protocol::ANS_CREATE_ART);
-	if(db.create_article(mh.recv_int_parameter(), mh.recv_string_parameter(), mh.recv_string_parameter(), mh.recv_string_parameter())) {
+	int grpID = mh.recv_int_parameter();
+	string title = mh.recv_string_parameter();
+	string author = mh.recv_string_parameter();
+	string text = mh.recv_string_parameter();
+	if(db.create_article(grpID, title, author, text)) {
 		mh.send_code(Protocol::ANS_ACK);
-	}
-	else{
+	}	else {
 		mh.send_code(Protocol::ANS_NAK);
 		mh.send_code(Protocol::ERR_NG_ALREADY_EXISTS);
+	}
+	mh.send_code(Protocol::ANS_END);
+}
+
+void handle_get_article(MessageHandler& mh, DatabaseInterface& db) {
+	mh.send_code(Protocol::ANS_GET_ART);
+	int grpID = mh.recv_int_parameter();
+	int artID = mh.recv_int_parameter();
+	pair<Article, int> p =  db.get_article(grpID, artID);
+	if(p.second == 1) {
+		mh.send_code(Protocol::ANS_ACK);
+		Article a = p.first;
+		mh.send_string_parameter(a.get_title());
+		mh.send_string_parameter(a.get_author());
+		mh.send_string_parameter(a.get_text());
+	}	else {
+		mh.send_code(Protocol::ANS_NAK);
+		if (p.second == 3) {
+			mh.send_code(Protocol::ERR_NG_DOES_NOT_EXIST);
+		} else {
+			mh.send_code(Protocol::ERR_ART_DOES_NOT_EXIST);
+		}
 	}
 	mh.send_code(Protocol::ANS_END);
 }
@@ -86,12 +119,10 @@ void handle_delete_article(MessageHandler& mh, DatabaseInterface& db) {
 	int delete_int = db.delete_article(mh.recv_int_parameter(), mh.recv_int_parameter());
 	if(delete_int == 1) {
 		mh.send_code(Protocol::ANS_ACK);
-	}
-	else if(delete_int == 2) {
+	}	else if(delete_int == 2) {
 		mh.send_code(Protocol::ANS_NAK);
 		mh.send_code(Protocol::ERR_ART_DOES_NOT_EXIST);
-	}
-	else{
+	} else {
 		mh.send_code(Protocol::ANS_NAK);
 		mh.send_code(Protocol::ERR_NG_DOES_NOT_EXIST);
 	}
@@ -132,11 +163,11 @@ int main(int argc, char* argv[]) {
 					case Protocol::COM_LIST_ART: handle_list_articles(mh, db); break;
           case Protocol::COM_CREATE_ART: handle_create_article(mh, db); break;
           case Protocol::COM_DELETE_ART: handle_delete_article(mh, db); break;
-          case Protocol::COM_GET_ART: break;
+          case Protocol::COM_GET_ART: handle_get_article(mh, db); break;
           case Protocol::COM_END: break;
           default: break;
         }
-
+				mh.recv_code();
 			} catch (ConnectionClosedException&) {
 				server.deregisterConnection(conn);
 				cout << "Client closed connection" << endl;
