@@ -49,7 +49,7 @@ void get_list_newsgroups(MessageHandler& mh, DatabaseInterface& db){
 	mh.send_code(Protocol::ANS_END);
 }
 
-void create_newsgroup(MessageHandler& mh, DatabaseInterface& db){
+void handle_create_news_group(MessageHandler& mh, DatabaseInterface& db){
 	mh.send_code(Protocol::ANS_CREATE_NG);
 	if(db.create_news_group(mh.recv_string_parameter())){
 		mh.send_code(Protocol::ANS_ACK);
@@ -61,7 +61,7 @@ void create_newsgroup(MessageHandler& mh, DatabaseInterface& db){
 	mh.send_code(Protocol::ANS_END);
 }
 
-void delete_newsgroup(MessageHandler& mh, DatabaseInterface& db){
+void handle_delete_news_group(MessageHandler& mh, DatabaseInterface& db){
 	mh.send_code(Protocol::ANS_DELETE_NG);
 	if(db.delete_news_group(mh.recv_int_parameter())){
 		mh.send_code(Protocol::ANS_ACK);
@@ -74,11 +74,8 @@ void delete_newsgroup(MessageHandler& mh, DatabaseInterface& db){
 }
 
 void handle_create_article(MessageHandler& mh, DatabaseInterface& db){
-// COM_CREATE_ART num_p string_p string_p string_p COM_END
-// ANS_CREATE_ART [ANS_ACK | ANS_NAK ERR_NG_DOES_NOT_EXIST] ANS_END
-
 	mh.send_code(Protocol::ANS_CREATE_ART);
-	if(db.create_article(mh.recv_int_parameter(), mh.recv_string_parameter(), mh.recv_string_parameter(), mh.recv_string_parameter())){
+	if(create_article(mh.recv_int_parameter(), mh.recv_string_parameter(), mh.recv_string_parameter(), mh.recv_string_parameter())){
 		mh.send_code(Protocol::ANS_ACK);
 	}
 	else{
@@ -89,13 +86,14 @@ void handle_create_article(MessageHandler& mh, DatabaseInterface& db){
 }
 
 void handle_delete_article(MessageHandler& mh, DatabaseInterface& db){
-// COM_DELETE_ART num_p num_p COM_END
-// ANS_DELETE_ART [ANS_ACK |
-// ANS_NAK [ERR_NG_DOES_NOT_EXIST | ERR_ART_DOES_NOT_EXIST]] ANS_END
-
 	mh.send_code(Protocol::ANS_DELETE_ART);
-	if(db.delete_article(mh.recv_int_parameter(), mh.recv_int_parameter())){
+	int delete_int = delete_article(mh.recv_int_parameter(), mh.recv_int_parameter());
+	if(delete_int == 1){
 		mh.send_code(Protocol::ANS_ACK);
+	}
+	else if(delete_int == 2){
+		mh.send_code(Protocol::ANS_NAK);
+		mh.send_code(Protocol::ERR_ART_DOES_NOT_EXIST);
 	}
 	else{
 		mh.send_code(Protocol::ANS_NAK);
@@ -133,11 +131,11 @@ int main(int argc, char* argv[]){
 				string result = "";
         switch (nbr) {
           case Protocol::COM_LIST_NG: get_list_newsgroups(mh, db); break;
-          case Protocol::COM_CREATE_NG: create_newsgroup(mh, db); break;
-          case Protocol::COM_DELETE_NG: delete_newsgroup(mh, db); break;
+          case Protocol::COM_CREATE_NG: handle_create_news_group(mh, db); break;
+          case Protocol::COM_DELETE_NG: handle_delete_news_group(mh, db); break;
 					case Protocol::COM_LIST_ART: handle_list_articles(mh, db); break;
-          case Protocol::COM_CREATE_ART: break;
-          case Protocol::COM_DELETE_ART: break;
+          case Protocol::COM_CREATE_ART: handle_create_article(mh, db); break;
+          case Protocol::COM_DELETE_ART: handle_delete_article(mh, db); break;
           case Protocol::COM_GET_ART: break;
           case Protocol::COM_END: break;
           default: break;
