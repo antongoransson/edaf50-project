@@ -15,10 +15,10 @@ CXXFLAGS =  -O2 -Wall -Wextra -pedantic-errors -Wold-style-cast
 CXXFLAGS += -std=c++11
 CXXFLAGS += -g
 CXXFLAGS += $(DEPFLAGS)
-LDFLAGS   = -g -L.
+LDFLAGS   = -g -L../lib
 
 # Libraries
-LDLIBS = -lclientserver
+LDLIBS = -lclientserver -lsqlite3
 # Targets
 PROGS = newsserver newsclient
 all: libclientserver.a $(PROGS)
@@ -32,22 +32,21 @@ client: newsclient
 	./newsclient localhost 3000
 
 
-newsserver: newsserver.o messagehandler.o article.o newsgroup.o database.o
-messagehandler: messagehandler.o
+newsserver: newsserver.o messagehandler.o article.o newsgroup.o database.o diskdatabase.o
 newsclient: newsclient.o
 libclientserver.a: connection.o server.o
-	ar rv libclientserver.a  connection.o server.o
-	ranlib libclientserver.a
+	ar rv ../lib/libclientserver.a  connection.o server.o
+	ranlib ../lib/libclientserver.a
 
 # Phony targets
 .PHONY: all clean distclean
- 
+
 # Standard clean
 clean:
 	rm -f *.o $(PROGS)
 
 distclean: clean
-	-rm *.d libclientserver.a
+	-rm *.d
 
 install:
 	cp newsserver ../bin/

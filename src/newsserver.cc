@@ -1,6 +1,7 @@
 /* myserver.cc: sample server program */
 #include "databaseinterface.h"
 #include "database.h"
+#include "diskdatabase.h"
 #include "server.h"
 #include "connection.h"
 #include "protocol.h"
@@ -137,6 +138,7 @@ int main(int argc, char* argv[]) {
 		exit(1);
 	}
 	Database db;
+	DiskDatabase ddb;
 	int port = -1;
 	try {
 		port = stoi(argv[1]);
