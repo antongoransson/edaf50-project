@@ -1,12 +1,13 @@
-/* myclient.cc: sample client program */
 #include "connection.h"
 #include "connectionclosedexception.h"
 #include "messagehandler.h"
 #include "protocol.h"
+
 #include <iostream>
 #include <string>
 #include <stdexcept>
 #include <cstdlib>
+#include <limits>
 
 using std::cin;
 using std::cout;
@@ -15,6 +16,8 @@ using std::cerr;
 using std::string;
 using std::exception;
 using std::stoi;
+using std::numeric_limits;
+using std::streamsize;
 
 void error_message_handler(Protocol& res) {
 	switch (res) {
@@ -32,6 +35,15 @@ void error_message_handler(Protocol& res) {
 			break;
 	}
 }
+
+int read_int_in() {
+	return 0;
+}
+
+string read_string_in() {
+	return "abc";
+}
+
 void handle_list_newsgroups(MessageHandler& mh) {
 	mh.send_code(Protocol::COM_LIST_NG);
 	mh.send_code(Protocol::COM_END);
@@ -153,7 +165,8 @@ void handle_get_article(MessageHandler& mh) {
 		string title = mh.recv_string_parameter();
 		string author = mh.recv_string_parameter();
 		string text = mh.recv_string_parameter();
-		cout << title << "by " << author << endl << text << endl;
+		cout << "------------------------------------" << endl;
+		cout << "Title: " << title << endl << "Author: " << author << endl << text << endl;
 	} else {
 		res = mh.recv_code();
 		error_message_handler(res);
@@ -171,15 +184,12 @@ void handle_create_article(MessageHandler& mh) {
 	cout << "Enter title of article: ";
 	cin.ignore();
 	getline(cin,title);
-	cout << endl;
 	cout << "Enter author of article: ";
 	cin.ignore();
 	getline(cin,author);
-	cout << endl;
 	cout << "Enter text of article: ";
 	cin.ignore();
 	getline(cin,text);
-	cout << endl;
 	mh.send_code(Protocol::COM_CREATE_ART);
 	mh.send_int_parameter(id);
 	mh.send_string_parameter(title);
@@ -214,7 +224,6 @@ int main(int argc, char* argv[]) {
 		cerr << "Usage: myclient host-name port-number" << endl;
 		exit(1);
 	}
-
 	int port = -1;
 	try {
 		port = stoi(argv[2]);
@@ -235,31 +244,41 @@ int main(int argc, char* argv[]) {
 
 	MessageHandler mh(conn);
 	int command;
-	while (cin >> command) {
-		try {
-			switch (command) {
-				case 1: handle_list_newsgroups(mh); break;
-				case 2: handle_create_newsgroups(mh); break;
-				case 3: handle_delete_newsgroup(mh); break;
-				case 4: handle_list_articles(mh); break;
-				case 5: handle_create_article(mh); break;
-				case 6: handle_delete_article(mh); break;
-				case 7: handle_get_article(mh); break;
-				case 8: list_instructions(); break;
-				case 0:
-					cout << "Exiting... Thanks for your visit!";
-					exit(0); break;
-				default:
-				 	cout << "Non existing command use on of the following:" << endl;
-					list_instructions();
-				break;
+	while (true) {
+		if (cin >> command) {
+			try {
+				switch (command) {
+					case 1: handle_list_newsgroups(mh); break;
+					case 2: handle_create_newsgroups(mh); break;
+					case 3: handle_delete_newsgroup(mh); break;
+					case 4: handle_list_articles(mh); break;
+					case 5: handle_create_article(mh); break;
+					case 6: handle_delete_article(mh); break;
+					case 7: handle_get_article(mh); break;
+					case 8: list_instructions(); break;
+					case 0:
+						cout << "Exiting... Thanks for your visit!";
+						exit(0); break;
+					default:
+					 	cout << "Non existing command use on of the following:" << endl;
+						list_instructions();
+					break;
 
+				}
+				cout << "------------------------------------" << endl;
+				cout << "Enter new command: " ;
+
+			} catch (ConnectionClosedException&) {
+				cout << " no reply from server. Exiting." << endl;
+				exit(1);
 			}
+		} else {
+			cin.clear();
+			cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+			cout << "Invalid command, please choose one from the list: " << endl;
+			list_instructions();
 			cout << "------------------------------------" << endl;
 			cout << "Enter new command: " ;
-		} catch (ConnectionClosedException&) {
-			cout << " no reply from server. Exiting." << endl;
-			exit(1);
 		}
 	}
 }
