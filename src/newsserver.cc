@@ -94,6 +94,23 @@ void handle_create_article(MessageHandler& mh, DatabaseInterface& db) {
 	mh.send_code(Protocol::ANS_END);
 }
 
+void handle_delete_article(MessageHandler& mh, DatabaseInterface& db) {
+	mh.send_code(Protocol::ANS_DELETE_ART);
+	int grpID = mh.recv_int_parameter();
+	int artID = mh.recv_int_parameter();
+	int delete_int = db.delete_article(grpID, artID);
+	if (delete_int == 1) {
+		mh.send_code(Protocol::ANS_ACK);
+	}	else if (delete_int == 2) {
+		mh.send_code(Protocol::ANS_NAK);
+		mh.send_code(Protocol::ERR_ART_DOES_NOT_EXIST);
+	} else {
+		mh.send_code(Protocol::ANS_NAK);
+		mh.send_code(Protocol::ERR_NG_DOES_NOT_EXIST);
+	}
+	mh.send_code(Protocol::ANS_END);
+}
+
 void handle_get_article(MessageHandler& mh, DatabaseInterface& db) {
 	mh.send_code(Protocol::ANS_GET_ART);
 	int grpID = mh.recv_int_parameter();
@@ -112,23 +129,6 @@ void handle_get_article(MessageHandler& mh, DatabaseInterface& db) {
 		} else {
 			mh.send_code(Protocol::ERR_ART_DOES_NOT_EXIST);
 		}
-	}
-	mh.send_code(Protocol::ANS_END);
-}
-
-void handle_delete_article(MessageHandler& mh, DatabaseInterface& db) {
-	mh.send_code(Protocol::ANS_DELETE_ART);
-	int grpID = mh.recv_int_parameter();
-	int artID = mh.recv_int_parameter();
-	int delete_int = db.delete_article(grpID, artID);
-	if (delete_int == 1) {
-		mh.send_code(Protocol::ANS_ACK);
-	}	else if (delete_int == 2) {
-		mh.send_code(Protocol::ANS_NAK);
-		mh.send_code(Protocol::ERR_ART_DOES_NOT_EXIST);
-	} else {
-		mh.send_code(Protocol::ANS_NAK);
-		mh.send_code(Protocol::ERR_NG_DOES_NOT_EXIST);
 	}
 	mh.send_code(Protocol::ANS_END);
 }

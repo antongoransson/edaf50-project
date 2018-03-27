@@ -11,8 +11,8 @@ int Article::get_id() const { return id; }
 
 int Article::get_group_id() const { return group_id; }
 
-string Article::get_author() const { return author; }
-
 string Article::get_title() const { return title; }
+
+string Article::get_author() const { return author; }
 
 string Article::get_text() const { return text; }

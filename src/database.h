@@ -15,7 +15,7 @@ public:
   bool create_news_group(const std::string& name) override;
   bool delete_news_group(int grpID) override;
   std::pair<std::vector<std::pair<int, std::string>>, bool> list_articles(int grpID) const override;
-  bool create_article(int grpID, const std::string& name, const std::string& author, const std::string& text) override;
+  bool create_article(int grpID, const std::string& title, const std::string& author, const std::string& text) override;
   int delete_article(int grpID, int artID) override;
   std::pair<Article, int> get_article(int grpID, int artID) const override;
 private:

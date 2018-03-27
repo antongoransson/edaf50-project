@@ -48,11 +48,11 @@ pair<vector<pair<int,string>>,bool> Database::list_articles(int grpID) const {
   return make_pair(output, true);
 }
 
-bool Database::create_article(int grpID, const string& name, const string& author, const string& text) {
+bool Database::create_article(int grpID, const string& title, const string& author, const string& text) {
   if(news_groups.find(grpID) == news_groups.end()) {
     return false;
   }
-  Article art(artCount, grpID, name, author, text);
+  Article art(artCount, grpID, title, author, text);
   if (articles.count(grpID) == 0) {
     articles[grpID] = map<int, Article>();
   }
