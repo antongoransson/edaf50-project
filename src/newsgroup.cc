@@ -5,6 +5,6 @@ NewsGroup::NewsGroup(string namei, int idi): name(namei), id(idi) {}
 
 NewsGroup::~NewsGroup(){}
 
-int NewsGroup::get_id(){ return id; }
+int NewsGroup::get_id() const{ return id; }
 
-string NewsGroup::get_name() { return name; }
+string NewsGroup::get_name() const { return name; }

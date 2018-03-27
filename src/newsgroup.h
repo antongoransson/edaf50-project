@@ -7,8 +7,8 @@ class NewsGroup {
   public:
     NewsGroup(std::string, int id);
     ~NewsGroup();
-    int get_id();
-    std::string get_name();
+    int get_id() const;
+    std::string get_name() const;
   private:
     std::string name;
     int id;

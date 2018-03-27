@@ -7,12 +7,12 @@ Article::Article(int id_i, int group_id_i, string title_i, string author_i, stri
 
 Article::~Article(){}
 
-int Article::get_id() { return id; }
+int Article::get_id() const { return id; }
 
-int Article::get_group_id() { return group_id; }
+int Article::get_group_id() const { return group_id; }
 
-string Article::get_author() { return author; }
+string Article::get_author() const { return author; }
 
-string Article::get_title() { return title; }
+string Article::get_title() const { return title; }
 
-string Article::get_text() { return text; }
+string Article::get_text() const { return text; }

@@ -21,7 +21,8 @@ using std::exception;
 using std::shared_ptr;
 using std::make_shared;
 using std::string;
-
+using std::pair;
+using std::vector;
 
 void handle_list_articles(MessageHandler& mh, DatabaseInterface& db) {
 	 mh.send_code(Protocol::ANS_LIST_ART);

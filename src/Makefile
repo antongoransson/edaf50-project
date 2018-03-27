@@ -31,7 +31,7 @@ server: newsserver
 client: newsclient
 	./newsclient localhost 3000
 
-sqlite3: sqlite3.c
+sqlite3: sqlite3.o
 	gcc -c sqlite3.c -o sqlite3.o -DTHREADSAFE=1
 
 newsserver: newsserver.o messagehandler.o article.o newsgroup.o sqlite3.o database.o diskdatabase.o
