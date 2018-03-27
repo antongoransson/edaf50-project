@@ -24,8 +24,15 @@ public:
 private:
   bool connect(const char*);
   void createDB(const char* db_file);
-  void getTableData();
-  void getArticles(unsigned int grpID);
+  bool insert_news_group(std::string title);
+  void delete_ng(unsigned int grpID);
+  bool insert_article(unsigned int grpID, std::string title, std::string author, std::string text);
+  void delete_art(unsigned int grpID, unsigned int artID);
+  bool has_ng(unsigned int grpID);
+  bool has_art(unsigned int grpID, unsigned int artID);
+  Article get_art(unsigned int grpID, unsigned int artID);
+  std::vector<std::pair<int, string>> get_table_data(unsigned int grpID);
+  void OLD_get_table_data();
   sqlite3* db;
 };
 
