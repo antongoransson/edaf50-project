@@ -108,6 +108,30 @@ void handle_delete_article(MessageHandler& mh) {
 	}
 	mh.recv_code();
 }
+void handle_get_article(MessageHandler& mh) {
+	int grpID;
+	cout << "Enter id of the article's newsgroup : ";
+	cin >> grpID;
+	int artID;
+	cout << "Enter id of the article : ";
+	cin >> artID;
+	mh.send_code(Protocol::COM_GET_ART);
+	mh.send_int_parameter(grpID);
+	mh.send_int_parameter(artID);
+	mh.send_code(Protocol::COM_END);
+	mh.recv_code();
+	Protocol res = mh.recv_code();
+	if (res == Protocol::ANS_ACK) {
+		string title = mh.recv_string_parameter();
+		string author = mh.recv_string_parameter();
+		string text = mh.recv_string_parameter();
+		cout << title << "by " << author << endl << text << endl;
+	} else {
+		res = mh.recv_code();
+		error_message_handler(res);
+	}
+	mh.recv_code();
+}
 
 void list_instructions() {
 	cout << "1. List newsgroups" << endl;
@@ -153,10 +177,10 @@ int main(int argc, char* argv[]) {
 				case 1: handle_list_newsgroups(mh); break;
 				case 2: handle_create_newsgroups(mh); break;
 				case 3: handle_delete_newsgroup(mh); break;
-				case 4:  break;
+				case 4: break;
 				case 5: break;
 				case 6: handle_delete_article(mh); break;
-				case 7: break;
+				case 7: handle_get_article(mh); break;
 				case 8: list_instructions(); break;
 				case 0:
 					cout << "Exiting... Thanks for your visit!";
