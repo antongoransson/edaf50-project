@@ -34,7 +34,7 @@ void handle_list_newsgroups(MessageHandler& mh) {
 }
 
 void handle_create_newsgroups(MessageHandler& mh) {
-	string name, temp;
+	string name;
 	cout << "Enter name of newsgroup: ";
 	cin.ignore();
 	getline(cin,name);
@@ -50,6 +50,71 @@ void handle_create_newsgroups(MessageHandler& mh) {
 	}
 	mh.recv_code();
 }
+
+
+
+void handle_list_articles(MessageHandler& mh) {
+	int id;
+	cout << "Enter number of newsgroup: ";
+	cin >> id;
+
+	mh.send_code(Protocol::COM_LIST_ART);
+	mh.send_int_parameter(id);
+	mh.send_code(Protocol::COM_END);
+	mh.recv_code();
+	Protocol res = mh.recv_code();
+	if (res == Protocol::ANS_ACK) {
+		int nbr = mh.recv_int_parameter();
+		if (nbr == 0 ) {
+			cout << "No artcles exists in that group use command: 5 to create one" << endl;
+		} else {
+			for (int i = 0; i != nbr; ++i) {
+				int grpID = mh.recv_int_parameter();
+				string name = mh.recv_string_parameter();
+				cout << "Article id:  " << grpID << "\t   " << "Name: " << name << endl;
+			}
+		}
+	} else {
+		cout << "Error handler jet to be ikmplemented." << endl;
+	}
+	mh.recv_code();
+}
+
+void handle_create_article(MessageHandler& mh) {
+	string name, title, author, text;
+	cout << "Enter id of newsgroup: ";
+	cin.ignore();
+	getline(cin,name);
+	cout << endl;
+	cout << "Enter title of article: ";
+	cin.ignore();
+	getline(cin,title);
+	cout << endl;
+	cout << "Enter author of article: ";
+	cin.ignore();
+	getline(cin,author);
+	cout << endl;
+	cout << "Enter text of article: ";
+	cin.ignore();
+	getline(cin,text);
+	cout << endl;
+
+	mh.send_code(Protocol::COM_CREATE_ART);
+	mh.send_string_parameter(name);
+	mh.send_string_parameter(title);
+	mh.send_string_parameter(author);
+	mh.send_string_parameter(text);
+	mh.send_code(Protocol::COM_END);
+	mh.recv_code();
+	Protocol res = mh.recv_code();
+	if (res == Protocol::ANS_ACK) {
+		cout << "Newsgroup with name: " << name << " created" << endl;
+	} else {
+		cout << "Newsgroup with name: " << name << "alrady exists" << endl;
+	}
+	mh.recv_code();
+}
+
 
 
 int main(int argc, char* argv[]) {
@@ -90,7 +155,7 @@ int main(int argc, char* argv[]) {
 				case 1: handle_list_newsgroups(mh); break;
 				case 2: handle_create_newsgroups(mh); break;
 				case 3: break;
-				case 4: break;
+				case 4: handle_list_articles(mh); break;
 				case 5: break;
 				case 6: break;
 				case 7: break;
