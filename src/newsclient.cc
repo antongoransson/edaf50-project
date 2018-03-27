@@ -258,7 +258,7 @@ int main(int argc, char* argv[]) {
 					case 8: list_instructions(); break;
 					case 0:
 						cout << "Exiting... Thanks for your visit!";
-						exit(0); break;
+						exit(0);
 					default:
 					 	cout << "Non existing command use on of the following:" << endl;
 						list_instructions();

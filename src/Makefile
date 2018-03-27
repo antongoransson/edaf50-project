@@ -15,13 +15,13 @@ CXXFLAGS =  -O2 -Wall -Wextra -pedantic-errors -Wold-style-cast
 CXXFLAGS += -std=c++11
 CXXFLAGS += -g
 CXXFLAGS += $(DEPFLAGS)
-LDFLAGS   = -g -L../lib
+LDFLAGS   = -g -L.
 
 # Libraries
-LDLIBS = -lclientserver -lsqlite3
+LDLIBS = -lclientserver -lpthread -ldl
 # Targets
 PROGS = newsserver newsclient
-all: libclientserver.a $(PROGS)
+all: sqlite3 libclientserver.a $(PROGS)
 
 # Create the library; ranlib is for Darwin (OS X) and maybe other systems.
 # Doesn't seem to do any damage on other systems.
@@ -31,12 +31,14 @@ server: newsserver
 client: newsclient
 	./newsclient localhost 3000
 
+sqlite3: sqlite3.c
+	gcc -c sqlite3.c -o sqlite3.o -DTHREADSAFE=1
 
-newsserver: newsserver.o messagehandler.o article.o newsgroup.o database.o diskdatabase.o
+newsserver: newsserver.o messagehandler.o article.o newsgroup.o sqlite3.o database.o diskdatabase.o
 newsclient: newsclient.o messagehandler.o
 libclientserver.a: connection.o server.o
-	ar rv ../lib/libclientserver.a  connection.o server.o
-	ranlib ../lib/libclientserver.a
+	ar rv libclientserver.a  connection.o server.o
+	ranlib libclientserver.a
 
 # Phony targets
 .PHONY: all clean distclean
