@@ -158,8 +158,8 @@ int main(int argc, char* argv[]) {
 		if (conn != nullptr) {
 			try {
 				MessageHandler mh(conn);
-				int code = mh.recv_code();
-				Protocol nbr = static_cast<Protocol>(code);
+				// int code = ;
+				Protocol nbr = mh.recv_code();//static_cast<Protocol>(code);
         switch (nbr) {
           case Protocol::COM_LIST_NG: get_list_newsgroups(mh, db); break;
           case Protocol::COM_CREATE_NG: handle_create_news_group(mh, db); break;

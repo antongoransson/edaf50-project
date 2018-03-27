@@ -18,6 +18,7 @@ using std::shared_ptr;
  *            The connection to use messages
  */
 MessageHandler::MessageHandler(shared_ptr<Connection>& c): conn(c)  {}
+MessageHandler::MessageHandler(Connection& c): conn(&c)  {}
 
 void MessageHandler::send_byte(int code) {
 	try {
@@ -89,9 +90,9 @@ void MessageHandler::send_string_parameter(string param) {
  * @throws ConnectionClosedException
  *             If the server died
  */
-int MessageHandler::recv_code() {
+Protocol MessageHandler::recv_code() {
 	unsigned char code = recv_byte();
-	return code;
+	return static_cast<Protocol>(code);
 }
 
 /**
@@ -117,8 +118,8 @@ int MessageHandler::recv_int() {
  *             If the server died
  */
 int MessageHandler::recv_int_parameter() {
-	int code = recv_code();
-	if (code != static_cast<int>(Protocol::PAR_NUM)) {
+	Protocol code = recv_code();
+	if (code != Protocol::PAR_NUM) {
 		throw ConnectionClosedException();
 	}
 	return recv_int();
@@ -133,8 +134,8 @@ int MessageHandler::recv_int_parameter() {
  */
 
 string MessageHandler::recv_string_parameter() {
-	int code = recv_code();
-	if (code != static_cast<int>(Protocol::PAR_STRING)) {
+	Protocol code = recv_code();
+	if (code != Protocol::PAR_STRING) {
 		throw ConnectionClosedException();
 	}
 	int n = recv_int();

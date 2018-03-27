@@ -12,6 +12,7 @@ bool file_exist(const string fileName) {
     ifstream infile(fileName);
     return infile.good();
 }
+
 bool DiskDatabase::connect(const char* db_file) {
   return sqlite3_open(db_file, &db) == SQLITE_OK;
 }

@@ -33,7 +33,7 @@ client: newsclient
 
 
 newsserver: newsserver.o messagehandler.o article.o newsgroup.o database.o diskdatabase.o
-newsclient: newsclient.o
+newsclient: newsclient.o messagehandler.o
 libclientserver.a: connection.o server.o
 	ar rv ../lib/libclientserver.a  connection.o server.o
 	ranlib ../lib/libclientserver.a
