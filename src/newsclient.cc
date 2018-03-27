@@ -43,7 +43,7 @@ void handle_list_newsgroups(MessageHandler& mh) {
 		for (int i = 0; i != nbr; ++i) {
 			int grpID = mh.recv_int_parameter();
 			string name = mh.recv_string_parameter();
-			cout << "Group id:  " << grpID << "\t   " << "Name: " << name << endl;
+			cout << "Group id: " << grpID << "\t   " << "Name: " << name << endl;
 		}
 	}
 	mh.recv_code();
@@ -115,6 +115,29 @@ void handle_list_articles(MessageHandler& mh) {
 	mh.recv_code();
 }
 
+void handle_delete_article(MessageHandler& mh) {
+	int grpID;
+	cout << "Enter id of the article's newsgroup : ";
+	cin >> grpID;
+	int artID;
+	cout << "Enter id of the article : ";
+	cin >> artID;
+	mh.send_code(Protocol::COM_DELETE_ART);
+	mh.send_int_parameter(grpID);
+	mh.send_int_parameter(artID);
+	mh.send_code(Protocol::COM_END);
+	mh.recv_code();
+	Protocol res = mh.recv_code();
+	if (res == Protocol::ANS_ACK) {
+		cout << "Article deleted" << endl;
+	} else {
+		res = mh.recv_code();
+		error_message_handler(res);
+	}
+	mh.recv_code();
+}
+
+
 void handle_create_article(MessageHandler& mh) {
 	string title, author, text;
 	int id;
@@ -150,7 +173,17 @@ void handle_create_article(MessageHandler& mh) {
 	mh.recv_code();
 }
 
-
+void list_instructions() {
+	cout << "1. List newsgroups" << endl;
+	cout << "2. Create newsgroup" << endl;
+	cout << "3. Delete newsgroup" << endl;
+	cout << "4. List articles" << endl;
+	cout << "5. Create an article" << endl;
+	cout << "6. Delete an article" << endl;
+	cout << "7. Get an article" << endl;
+	cout << "8. To list these instructions again" << endl;
+	cout << "0. To exit the program" << endl;
+}
 
 int main(int argc, char* argv[]) {
 	if (argc != 3) {
@@ -171,19 +204,12 @@ int main(int argc, char* argv[]) {
 		cerr << "Connection attempt failed" << endl;
 		exit(1);
 	}
-	MessageHandler mh(conn);
-	cout << "Welcome to our news system!" << endl << "Avaible commands:" << endl;
-	cout << "1. List newsgroups" << endl;
-	cout << "2. Create newsgroup" << endl;
-	cout << "3. Delete newsgroup" << endl;
-	cout << "4. List articles" << endl;
-	cout << "5. Create an article" << endl;
-	cout << "6. Delete an article" << endl;
-	cout << "7. Get an article" << endl;
-	cout << "8. To list these instructions again" << endl;
+ 	cout << "Welcome to our news system!" << endl << "Avaible commands:" << endl;
+	list_instructions();
 	cout << "------------------------------------" << endl;
 	cout << "Enter command: ";
 
+	MessageHandler mh(conn);
 	int command;
 	while (cin >> command) {
 		try {
@@ -193,18 +219,20 @@ int main(int argc, char* argv[]) {
 				case 3: handle_delete_newsgroup(mh); break;
 				case 4: handle_list_articles(mh); break;
 				case 5: handle_create_article(mh); break;
-				case 6: break;
+				case 6: handle_delete_article(mh); break;
 				case 7: break;
-				case 8: break;
-				default: break;
+				case 8: list_instructions(); break;
+				case 0:
+					cout << "Exiting... Thanks for your visit!";
+					exit(0); break;
+				default:
+				 	cout << "Non existing command use on of the following:" << endl;
+					list_instructions();
+				break;
 
 			}
 			cout << "------------------------------------" << endl;
-			cout << "Enter command: " ;
-			// writeNumber(conn, nbr);
-			// string reply = readString(conn);
-			// cout << " " << reply << endl;
-			// cout << "Type another number: ";
+			cout << "Enter new command: " ;
 		} catch (ConnectionClosedException&) {
 			cout << " no reply from server. Exiting." << endl;
 			exit(1);
