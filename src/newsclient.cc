@@ -112,7 +112,7 @@ void handle_list_articles(MessageHandler& mh) {
 	if (res == Protocol::ANS_ACK) {
 		int nbr = mh.recv_int_parameter();
 		if (nbr == 0 ) {
-			cout << "No artcles exists in that group use command: 5 to create one" << endl;
+			cout << "No articles exists in that group, use command: 5 to create one" << endl;
 		} else {
 			for (int i = 0; i != nbr; ++i) {
 				int grpID = mh.recv_int_parameter();
@@ -120,6 +120,44 @@ void handle_list_articles(MessageHandler& mh) {
 				cout << "Article id:  " << grpID << "\t   " << "Name: " << name << endl;
 			}
 		}
+	} else {
+		res = mh.recv_code();
+		error_message_handler(res);
+	}
+	mh.recv_code();
+}
+
+
+
+void handle_create_article(MessageHandler& mh) {
+	string title, author, text, line	;
+	int id;
+	cout << "Enter id of newsgroup: ";
+	cin >> id;
+
+	cout << "Enter title of article: ";
+	cin.ignore();
+	getline(cin, title);
+	cout << "Enter author of article: ";
+	getline(cin, author);
+	cout << "Enter text of article (Press ctrl + D when finished): ";
+	while (getline(std::cin, line)) {
+		text += line + "\n";
+	}
+	cout << title << endl;
+	cout << author << endl;
+
+	cin.clear();
+	mh.send_code(Protocol::COM_CREATE_ART);
+	mh.send_int_parameter(id);
+	mh.send_string_parameter(title);
+	mh.send_string_parameter(author);
+	mh.send_string_parameter(text);
+	mh.send_code(Protocol::COM_END);
+	mh.recv_code();
+	Protocol res = mh.recv_code();
+	if (res == Protocol::ANS_ACK) {
+		cout << "Article with title: " << title << " created" << endl;
 	} else {
 		res = mh.recv_code();
 		error_message_handler(res);
@@ -148,6 +186,7 @@ void handle_delete_article(MessageHandler& mh) {
 	}
 	mh.recv_code();
 }
+
 void handle_get_article(MessageHandler& mh) {
 	int grpID;
 	cout << "Enter id of the article's newsgroup : ";
@@ -174,38 +213,6 @@ void handle_get_article(MessageHandler& mh) {
 	mh.recv_code();
 }
 
-
-void handle_create_article(MessageHandler& mh) {
-	string title, author, text;
-	int id;
-	cout << "Enter id of newsgroup: ";
-	cin >> id;
-
-	cout << "Enter title of article: ";
-	cin.ignore();
-	getline(cin,title);
-	cout << "Enter author of article: ";
-	cin.ignore();
-	getline(cin,author);
-	cout << "Enter text of article: ";
-	cin.ignore();
-	getline(cin,text);
-	mh.send_code(Protocol::COM_CREATE_ART);
-	mh.send_int_parameter(id);
-	mh.send_string_parameter(title);
-	mh.send_string_parameter(author);
-	mh.send_string_parameter(text);
-	mh.send_code(Protocol::COM_END);
-	mh.recv_code();
-	Protocol res = mh.recv_code();
-	if (res == Protocol::ANS_ACK) {
-		cout << "Article with title: " << title << " created" << endl;
-	} else {
-		res = mh.recv_code();
-		error_message_handler(res);
-	}
-	mh.recv_code();
-}
 
 void list_instructions() {
 	cout << "1. List newsgroups" << endl;
@@ -273,6 +280,7 @@ int main(int argc, char* argv[]) {
 				exit(1);
 			}
 		} else {
+			cout << command;
 			cin.clear();
 			cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 			cout << "Invalid command, please choose one from the list: " << endl;

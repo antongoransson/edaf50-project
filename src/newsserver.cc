@@ -1,4 +1,3 @@
-/* myserver.cc: sample server program */
 #include "databaseinterface.h"
 #include "database.h"
 #include "diskdatabase.h"
@@ -7,6 +6,7 @@
 #include "protocol.h"
 #include "connectionclosedexception.h"
 #include "messagehandler.h"
+
 #include <memory>
 #include <iostream>
 #include <string>

@@ -1,4 +1,5 @@
 #include "newsgroup.h"
+
 using std::string;
 
 NewsGroup::NewsGroup(string namei, int idi): name(namei), id(idi) {}

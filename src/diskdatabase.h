@@ -24,13 +24,9 @@ public:
 private:
   bool connect(const char*);
   void createDB(const char* db_file);
-  void delete_ng(unsigned int grpID);
-  void delete_art(unsigned int grpID, unsigned int artID);
-  bool has_ng(unsigned int grpID) const;
-  bool has_art(unsigned int grpID, unsigned int artID) const;
-  Article get_art(unsigned int grpID, unsigned int artID) const;
+  bool has_ng(int grpID) const;
+  bool has_art(int grpID, int artID) const;
   std::vector<std::pair<int, std::string>> get_table_data(int grpID) const;
-  void OLD_get_table_data();
   sqlite3* db;
 };
 
