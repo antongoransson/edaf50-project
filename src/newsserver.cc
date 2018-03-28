@@ -27,16 +27,16 @@ using std::vector;
 void handle_list_articles(MessageHandler& mh, DatabaseInterface& db) {
   mh.send_code(Protocol::ANS_LIST_ART);
   int nbr = mh.recv_int_parameter();
-  pair<vector<pair<int,string>>, bool> articles = db.list_articles(nbr);
+  pair<vector<pair<int, string>>, bool> articles = db.list_articles(nbr);
   if (!articles.second) {
     mh.send_code(Protocol::ANS_NAK);
     mh.send_code(Protocol::ERR_NG_DOES_NOT_EXIST);
   } else {
     mh.send_code(Protocol::ANS_ACK);
-    vector<pair<int,string>>v = articles.first;
+    vector<pair<int, string>> v = articles.first;
     int size = v.size();
     mh.send_int_parameter(size);
-    for (auto p: v) {
+    for (const auto& p: v) {
       mh.send_int_parameter(p.first);
       mh.send_string_parameter(p.second);
     }
@@ -49,7 +49,7 @@ void get_list_newsgroups(MessageHandler& mh, DatabaseInterface& db) {
   vector<pair<int, string>> v = db.list_news_groups();
   int size = v.size();
   mh.send_int_parameter(size);
-  for (auto p: v) {
+  for (const auto& p: v) {
     mh.send_int_parameter(p.first);
     mh.send_string_parameter(p.second);
   }

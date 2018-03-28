@@ -112,7 +112,7 @@ void handle_list_articles(MessageHandler& mh) {
   if (res == Protocol::ANS_ACK) {
     int nbr = mh.recv_int_parameter();
     if (nbr == 0 ) {
-    cout << "No articles exists in that group, use command: 5 to create one" << endl;
+      cout << "No articles exists in that group, use command: 5 to create one" << endl;
     } else {
       for (int i = 0; i != nbr; ++i) {
       int grpID = mh.recv_int_parameter();
@@ -144,9 +144,6 @@ void handle_create_article(MessageHandler& mh) {
   while (getline(std::cin, line)) {
     text += line + "\n";
   }
-  cout << title << endl;
-  cout << author << endl;
-
   cin.clear();
   mh.send_code(Protocol::COM_CREATE_ART);
   mh.send_int_parameter(id);
@@ -228,7 +225,7 @@ void list_instructions() {
 
 int main(int argc, char* argv[]) {
   if (argc != 3) {
-    cerr << "Usage: myclient host-name port-number" << endl;
+    cerr << "Usage: newclient host-name port-number" << endl;
     exit(1);
   }
   int port = -1;
