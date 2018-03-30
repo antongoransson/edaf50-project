@@ -31,22 +31,22 @@ void error_message_handler(const Protocol& res) {
       cout << "Article does not exist" << endl;
       break;
     default:
-      cout << "Server violated the protocol, please try again" << endl << "Exiting... " << endl;
+      cout << "Protocol was violated, please try again" << endl << "Exiting... " << endl;
       exit(1);
   }
 }
 // This should never be needed, but better safe than sorry
 void handle_protocol_ans(const Protocol& res, const Protocol& expected) {
   if (res != expected) {
-    cout << endl << "Server violated the protocol, please try again" << endl << "Exiting..." << endl;
+    cout << endl << "Protocol was violated, please try again" << endl << "Exiting..." << endl;
     exit(1);
   }
 }
 
 void check_for_eof() {
   if (cin.eof()) {
-      cout << endl << "Exiting... Thanks for your visit!" << endl;
-      exit(0);
+    cout << endl << "Exiting... Thanks for your visit!" << endl;
+    exit(0);
   }
 }
 
