@@ -5,7 +5,6 @@
 #include <string>
 #include <memory>
 
-
 class MessageHandler {
 	public:
 	MessageHandler(std::shared_ptr<Connection>& c);

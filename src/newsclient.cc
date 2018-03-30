@@ -158,8 +158,6 @@ void handle_list_articles(MessageHandler& mh) {
   handle_protocol_ans(end, Protocol::ANS_END);
 }
 
-
-
 void handle_create_article(MessageHandler& mh) {
   cout << "Enter id of newsgroup: ";
   int grpID = read_int_cin();

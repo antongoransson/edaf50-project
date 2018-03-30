@@ -2,6 +2,7 @@
 #define ARTICLE_H
 
 #include <string>
+
 class Article {
   public:
     Article(int id_i = -1, int group_id_i = -1, std::string author_i = "", std::string title_i = "", std::string text_i = "");
