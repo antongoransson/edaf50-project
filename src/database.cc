@@ -5,7 +5,7 @@ using std::pair;
 using std::map;
 using std::make_pair;
 
-Database::Database(): ngCount(0), artCount(0) {}
+Database::Database(): ngCount(1), artCount(1) {}
 
 vector<pair<int,string>> Database::list_news_groups() const {
   vector<pair<int,string>> output;
@@ -63,24 +63,24 @@ bool Database::create_article(int grpID, const string& title, const string& auth
 
 int Database::delete_article(int grpID, int artID) {
   if(articles.find(grpID) == articles.end()) {
-    return 3;
+    return NO_NG;
   }
   if(articles.at(grpID).find(artID) == articles.at(grpID).end()) {
-    return 2;
+    return NO_ARTICLE;
   }
   articles.at(grpID).erase(artID);
-  return 1;
+  return OK;
 }
 
 pair<Article, int> Database::get_article(int grpID, int artID) const {
   Article art;
   if(articles.find(grpID) == articles.end()) {
-    return make_pair(art, 3);
+    return make_pair(art, NO_NG);
   }
   if(articles.at(grpID).find(artID) == articles.at(grpID).end()) {
-    return make_pair(art, 2);
+    return make_pair(art, NO_ARTICLE);
   }
 
   art = articles.at(grpID).at(artID);
-  return make_pair(art, 1);
+  return make_pair(art, OK);
 }

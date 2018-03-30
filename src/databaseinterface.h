@@ -6,6 +6,10 @@
 #include "article.h"
 #include "newsgroup.h"
 
+const int OK = 9; // Returned when evertything went well
+const int NO_NG = 10; // Returned when newsgroup doesn't exist
+const int NO_ARTICLE = 11; // Returned when article doesn't exist
+
 class DatabaseInterface {
 public:
   virtual ~DatabaseInterface() = default;
@@ -46,18 +50,18 @@ public:
     Deletes an article from the database
     @param grpID the id of the group that the article belongs to
     @param artID the id of the article
-    @return 3 if no group with grpID exists,
-      2 if no article with id artID exists
-      and 1 if it was successful
+    @return NO_NG if no group with grpID exists,
+      NO_ARTICLE if no article with id artID exists
+      and OK if it was successful
   */
   virtual int delete_article(int grpID, int artID) = 0;
   /*
     Gets an article in the database
     @param grpID the id of the group that the article belongs to
     @param artID the id of the article
-    @return a pair containg the article and 1 if it was successful,
-      a pair with a default constructed article and 3 if no group with grpID exists,
-      a pair with a default constructed article and 2 if no article with artID exists,
+    @return a pair containg the article and OK if it was successful,
+      a pair with a default constructed article and NO_NG if no group with grpID exists,
+      a pair with a default constructed article and NO_ARTICLE if no article with artID exists,
   */
   virtual std::pair<Article, int> get_article(int grpID, int artID) const = 0;
 };

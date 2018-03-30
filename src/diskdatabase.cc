@@ -87,10 +87,10 @@ bool DiskDatabase::create_article(int grpID, const string& title, const string& 
 
 int DiskDatabase::delete_article(int grpID, int artID) {
   if (!news_group_exists(grpID)) {
-    return 3;
+    return NO_NG;
   }
   if (!article_exists(grpID, artID)) {
-    return 2;
+    return NO_ARTICLE;
   }
   sqlite3_stmt *statement;
 
@@ -101,16 +101,16 @@ int DiskDatabase::delete_article(int grpID, int artID) {
     sqlite3_step(statement);
     sqlite3_finalize(statement);
   }
-  return 1;
+  return OK;
 }
 
 pair<Article, int> DiskDatabase::get_article(int grpID, int artID) const {
   Article art;
   if (!news_group_exists(grpID)) {
-    return make_pair(art, 3);
+    return make_pair(art, NO_NG);
   }
   if (!article_exists(grpID, artID)) {
-    return make_pair(art, 2);
+    return make_pair(art, NO_ARTICLE);
   }
   sqlite3_stmt *statement;
   const char *query = "SELECT * FROM articles WHERE grpID = ? AND artID = ?";
@@ -125,7 +125,7 @@ pair<Article, int> DiskDatabase::get_article(int grpID, int artID) const {
     int grp_i = sqlite3_column_int(statement, 4);
     art = Article(art_i, grp_i, title, author, text);
   }
-  return make_pair(art, 1);
+  return make_pair(art, OK);
 }
 
 bool file_exist(const string& fileName) {
@@ -167,27 +167,27 @@ void DiskDatabase::initializeDB(const char* db_file) {
 	char* zErrMsg = 0;
 	const char* pSQL[STATEMENTS];
   pSQL[0] = "CREATE TABLE newsgroups (\
-              grpID INTEGER, \
-              ng_name TEXT NOT NULL UNIQUE, \
-              PRIMARY KEY(grpID)\
+              grpID INTEGER PRIMARY KEY AUTOINCREMENT, \
+              ng_name TEXT NOT NULL UNIQUE \
             );";
   pSQL[1] = "CREATE TABLE articles (\
-              artID INTEGER, \
-              title TEXT, \
-              author TEXT,\
-              txt TEXT, \
+              artID INTEGER PRIMARY KEY AUTOINCREMENT, \
+              title TEXT NOT NULL, \
+              author TEXT NOT NULL,\
+              txt TEXT NOT NULL, \
               grpID INTEGER, \
-              PRIMARY KEY(artID),\
               FOREIGN KEY (grpID) REFERENCES newsgroups(grpID) ON DELETE CASCADE\
             );";
 
   if (!connect(db_file)) {
-  	cout << "Can't open database: "<< sqlite3_errmsg(db) << "\n";
+  	cout << "Can't open database, make sure it isn't used by another program" << "\n";
+    exit(1);
   }	else {
     for(int i = 0; i < STATEMENTS; i++) {
       if (sqlite3_exec(db, pSQL[i], NULL, 0, &zErrMsg) != SQLITE_OK) {
         cout << "SQL error: " << sqlite3_errmsg(db) << "\n";
         sqlite3_free(zErrMsg);
+        exit(1);
         break;
       }
     }
@@ -230,7 +230,8 @@ DiskDatabase::DiskDatabase() {
     initializeDB(db_file);
   } else {
     if (!connect(db_file)) {
-      cout << "Can't open database: " << sqlite3_errmsg(db) << "\n";
+      cout << "Can't open database, make sure it isn't used by another program"  << "\n";
+      exit(1);
     }
   }
 }

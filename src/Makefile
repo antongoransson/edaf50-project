@@ -23,15 +23,13 @@ LDLIBS = -lclientserver -lpthread -ldl
 PROGS = newsserver newsclient
 all: sqlite3 libclientserver.a $(PROGS)
 
-# Create the library; ranlib is for Darwin (OS X) and maybe other systems.
-# Doesn't seem to do any damage on other systems.
 server: newsserver
 	./newsserver 3000
 
 client: newsclient
 	./newsclient localhost 3000
 
-sqlite3: 
+sqlite3:
 	gcc -c sqlite3.c -o sqlite3.o -DTHREADSAFE=1
 
 newsserver: newsserver.o messagehandler.o article.o newsgroup.o sqlite3.o database.o diskdatabase.o
