@@ -29,6 +29,8 @@
 *.exe
 *.out
 *.app
+newsclient
+newsserver
 
 # Sqlite3 databases
 *.db
