@@ -135,7 +135,7 @@ void handle_get_article(MessageHandler& mh, DatabaseInterface& db) {
 
 int main(int argc, char* argv[]) {
   if (argc != 2) {
-    cerr << "Usage: myserver port-number" << endl;
+    cerr << "Usage: newsserver port-number" << endl;
     exit(1);
   }
 

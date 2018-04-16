@@ -272,7 +272,7 @@ int main(int argc, char* argv[]) {
     cerr << "Connection attempt failed" << endl;
     exit(1);
   }
-  cout << "Welcome to our news system!" << endl << "Avaible commands:" << endl;
+  cout << "Welcome to our news system!" << endl << "Available commands:" << endl;
   list_instructions();
   cout << "------------------------------------" << endl;
   cout << "Enter command: ";
@@ -295,12 +295,12 @@ int main(int argc, char* argv[]) {
             cout << "Exiting... Thanks for your visit!";
             exit(0);
           default:
-            cout << "Non existing command use on of the following:" << endl;
+            cout << "Non existing command, use on of the following:" << endl;
             list_instructions();
           break;
         }
         cout << "------------------------------------" << endl;
-        cout << "Enter new command: " ;
+        cout << "Enter command: " ;
       } catch (ConnectionClosedException&) {
         cout << "No reply from server. The protocol was possbily violated. Exiting..." << endl;
         exit(1);
@@ -312,7 +312,7 @@ int main(int argc, char* argv[]) {
       cout << "Invalid command, please choose one from the list: " << endl;
       list_instructions();
       cout << "------------------------------------" << endl;
-      cout << "Enter new command: " ;
+      cout << "Enter command: " ;
     }
   }
 }
