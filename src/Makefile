@@ -18,10 +18,10 @@ CXXFLAGS += $(DEPFLAGS)
 LDFLAGS   = -g -L.
 
 # Libraries
-LDLIBS = -lclientserver -lpthread -ldl
+LDLIBS = -lclientserver -lsql -lpthread -ldl
 # Targets
 PROGS = newsserver newsclient
-all: sqlite3 libclientserver.a $(PROGS)
+all: libsql.a libclientserver.a  $(PROGS)
 
 server: newsserver
 	./newsserver 3000
@@ -29,13 +29,15 @@ server: newsserver
 client: newsclient
 	./newsclient localhost 3000
 
-sqlite3:
-	gcc -c sqlite3.c -o sqlite3.o -DTHREADSAFE=1
+newsserver: newsserver.o database.o diskdatabase.o article.o newsgroup.o
+newsclient: newsclient.o
+libsql.a:
+	gcc -c sqlite3.c -o sqlite3.o -DTHREADSAFE=1 # Compiles the sqlite3 sourcecode
+	ar rv libsql.a  sqlite3.o
+	ranlib libsql.a
 
-newsserver: newsserver.o messagehandler.o article.o newsgroup.o sqlite3.o database.o diskdatabase.o
-newsclient: newsclient.o messagehandler.o
-libclientserver.a: connection.o server.o
-	ar rv libclientserver.a  connection.o server.o
+libclientserver.a: connection.o server.o messagehandler.o
+	ar rv libclientserver.a connection.o server.o  messagehandler.o
 	ranlib libclientserver.a
 
 # Phony targets
